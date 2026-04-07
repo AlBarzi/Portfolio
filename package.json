@@ -1,0 +1,31 @@
+{
+  "name": "portfolio-terminal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:client": "vite",
+    "ai:server": "node server/aiServer.mjs",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "worldcup:build": "cd \"Projects/WorldCup/Projet_Equipe 2/web\" && ./build_web.sh",
+    "worldcup:preview": "cd \"Projects/WorldCup/Projet_Equipe 2/web/build/web\" && python3 -m http.server 8010",
+    "worldcup:tk:web:up": "docker compose -f deploy/worldcup-novnc/docker-compose.yml --env-file deploy/worldcup-novnc/.env up -d --build",
+    "worldcup:tk:web:down": "docker compose -f deploy/worldcup-novnc/docker-compose.yml --env-file deploy/worldcup-novnc/.env down",
+    "worldcup:tk:web:logs": "docker compose -f deploy/worldcup-novnc/docker-compose.yml --env-file deploy/worldcup-novnc/.env logs -f app",
+    "worldcup:tk:web:validate": "docker compose -f deploy/worldcup-novnc/docker-compose.yml --env-file deploy/worldcup-novnc/.env exec app /opt/worldcup/scripts/healthcheck.sh"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.1"
+  }
+}
+

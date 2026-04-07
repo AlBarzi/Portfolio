@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sudoku de Ramzy - plusieurs niveaux">
+  <title>Sudoku - Ramzy</title>
+  <link rel="stylesheet" href="sudoku.css">
+</head>
+<body>
+  <header class="game-hero">
+    <a class="back-link" href="../../index.html">&#8592; Back to terminal</a>
+    <h1>Sudoku</h1>
+  </header>
+
+  <main class="game">
+    <section class="panel">
+      <div class="controls">
+        <div class="difficulty">
+          <button class="chip is-active" data-difficulty="easy">Easy</button>
+          <button class="chip" data-difficulty="medium">Medium</button>
+          <button class="chip" data-difficulty="hard">Hard</button>
+        </div>
+        <div class="actions">
+          <button id="new-game" class="btn primary">New puzzle</button>
+          <button id="hint-game" class="btn">Hint (5)</button>
+          <button id="toggle-notes" class="btn">Notes: Off</button>
+          <button id="solve-game" class="btn ghost">Solution</button>
+        </div>
+      </div>
+      <div class="status">
+        <span id="timer">00:00</span>
+        <span id="mistakes">Mistakes: 0/3</span>
+        <span id="status-message">Good luck!</span>
+      </div>
+    </section>
+
+    <section class="board-wrap" aria-label="Sudoku board">
+      <div class="board-container">
+        <div id="sudoku-board" class="board" role="grid" aria-live="polite"></div>
+        <div id="game-overlay" class="overlay is-hidden" aria-live="assertive">
+          <div class="overlay-card">
+            <h2 id="overlay-title">You win!</h2>
+            <p id="overlay-message">Great job. Ready for another puzzle?</p>
+            <button id="restart-game" class="btn primary">Play again</button>
+          </div>
+        </div>
+      </div>
+      <div class="numbers" aria-label="Number pad">
+        <button class="num" data-value="1">1</button>
+        <button class="num" data-value="2">2</button>
+        <button class="num" data-value="3">3</button>
+        <button class="num" data-value="4">4</button>
+        <button class="num" data-value="5">5</button>
+        <button class="num" data-value="6">6</button>
+        <button class="num" data-value="7">7</button>
+        <button class="num" data-value="8">8</button>
+        <button class="num" data-value="9">9</button>
+        <button class="num wide" data-action="clear">Clear</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="sudoku.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,230 @@
+:root {
+  color-scheme: light;
+  --bg: #bdbdbd;
+  --panel: #c6c6c6;
+  --panel-dark: #7b7b7b;
+  --panel-light: #ffffff;
+  --text: #1b1b1b;
+  --cell: 24px;
+  --cols: 9;
+  --rows: 9;
+  --cell-hidden: #c0c0c0;
+  --cell-border-dark: #7b7b7b;
+  --cell-border-light: #ffffff;
+  --cell-reveal: #dcdcdc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Courier New", monospace;
+}
+
+.page-header {
+  max-width: 980px;
+  margin: 24px auto 16px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.back-link {
+  color: #000;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+.ms-wrapper {
+  max-width: 980px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.ms-shell {
+  background: var(--panel);
+  padding: 12px;
+  border: 2px solid var(--panel-dark);
+  box-shadow: inset 2px 2px 0 var(--panel-light), inset -2px -2px 0 var(--panel-dark);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.ms-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border: 2px solid var(--panel-dark);
+  box-shadow: inset 2px 2px 0 var(--panel-light), inset -2px -2px 0 var(--panel-dark);
+  background: #bfbfbf;
+}
+
+.ms-counter {
+  width: 64px;
+  height: 34px;
+  background: #000;
+  color: #ff2c2c;
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  letter-spacing: 2px;
+}
+
+.ms-face {
+  width: 38px;
+  height: 38px;
+  background: #dcdcdc;
+  border: 2px solid var(--panel-dark);
+  box-shadow: inset 2px 2px 0 var(--panel-light), inset -2px -2px 0 var(--panel-dark);
+  cursor: pointer;
+}
+
+.ms-face::before {
+  content: ":)";
+  display: block;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: center;
+  line-height: 32px;
+}
+
+.ms-face[data-face="surprised"]::before { content: ":o"; }
+.ms-face[data-face="dead"]::before { content: "x("; }
+.ms-face[data-face="cool"]::before { content: "B)"; }
+
+.ms-face:active {
+  box-shadow: inset 2px 2px 0 var(--panel-dark), inset -2px -2px 0 var(--panel-light);
+}
+
+.ms-board {
+  margin-top: 4px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 9), var(--cell, 24px));
+  grid-auto-rows: var(--cell, 24px);
+  min-width: 240px;
+  min-height: 240px;
+  width: fit-content;
+  border: 2px solid var(--panel-dark);
+  background: #bcbcbc;
+  padding: 2px;
+  box-shadow: inset 2px 2px 0 var(--panel-light), inset -2px -2px 0 var(--panel-dark);
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  background: var(--cell-hidden);
+  border: 1px solid var(--cell-border-dark);
+  box-shadow: inset 2px 2px 0 var(--cell-border-light), inset -2px -2px 0 var(--cell-border-dark);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #000;
+}
+
+.cell.revealed {
+  background: var(--cell-reveal);
+  border: 1px solid #9c9c9c;
+  box-shadow: none;
+  cursor: default;
+}
+
+.cell.flagged {
+  color: #c41212;
+}
+
+.cell.mine {
+  color: #000;
+  background: #f2b1b1;
+}
+
+.cell.n1 { color: #0000ff; }
+.cell.n2 { color: #007a00; }
+.cell.n3 { color: #ff0000; }
+.cell.n4 { color: #00007a; }
+.cell.n5 { color: #7a0000; }
+.cell.n6 { color: #007a7a; }
+.cell.n7 { color: #000; }
+.cell.n8 { color: #7a7a7a; }
+
+.ms-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.ms-level {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+select {
+  background: #efefef;
+  border: 1px solid #7b7b7b;
+  padding: 4px 6px;
+  font-family: inherit;
+}
+
+.ms-status {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.ms-help {
+  background: #d0d0d0;
+  padding: 12px 16px;
+  border: 2px solid var(--panel-dark);
+  box-shadow: inset 2px 2px 0 var(--panel-light), inset -2px -2px 0 var(--panel-dark);
+}
+
+.ms-help h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.ms-help ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 720px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ms-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

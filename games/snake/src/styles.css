@@ -1,0 +1,647 @@
+@font-face {
+  font-family: "Conthrax SB";
+  src: url("https://manzdev.github.io/twitch-nokia3310/conthrax-sb.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nokia Cellphone FC";
+  src: url("https://manzdev.github.io/twitch-nokia3310/nokia-cellphone-fc.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rubber Nipple Factory";
+  src: url("https://manzdev.github.io/twitch-nokia3310/rubber-nipple-factory.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --nokia-bgcolor: #3f3d46;
+  --nokia-radius-shape: 16% 16% 14% 14% / 31% 31% 54% 54%;
+  --nokia-logo-font: "Conthrax SB", monospace;
+  --nokia-phone-font: "Nokia Cellphone FC", monospace;
+  --nokia-number-font: "Rubber Nipple Factory", monospace;
+  --ui-bg: #f0ede6;
+  --ui-panel: #ece3cf;
+  --ui-border: #171717;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body,
+#root { height: 100%; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ui-bg);
+  color: #191919;
+  font-family: var(--nokia-phone-font), monospace;
+}
+
+button,
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font: inherit;
+}
+
+.page {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem 1.2rem;
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-block { text-align: center; }
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.brand-block h1 {
+  margin: 0;
+  font-family: var(--nokia-logo-font), monospace;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+}
+
+.back-link {
+  text-decoration: none;
+  color: #222;
+  font-weight: 700;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tab,
+.btn {
+  border: 3px solid var(--ui-border);
+  background: #d9ceb6;
+  box-shadow: 0 4px 0 var(--ui-border);
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab {
+  padding: 0.55rem 0.9rem;
+}
+
+.tab.is-main {
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+}
+
+.tab.is-active {
+  background: #c6d79b;
+}
+
+.tab:active,
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--ui-border);
+}
+
+.content {
+  min-height: 0;
+  flex: 1;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.game-layout {
+  height: 100%;
+  overflow: visible;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4rem;
+  padding-top: 5vh;
+}
+
+.phone-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 420px;
+  max-width: 420px;
+  flex: 0 0 420px;
+  align-self: flex-start;
+  min-width: 0;
+  overflow: visible;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+  height: auto;
+}
+
+.oval-container {
+  display: flex;
+  justify-content: center;
+  width: 420px;
+  overflow: visible;
+}
+
+.nokia3310 {
+  width: 170px;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--nokia-bgcolor);
+  background-image: linear-gradient(to right, #0005 15%, transparent), linear-gradient(111deg, #2f2b31, #7d8299);
+  box-shadow: 0 0 8px 4px #0006, 0 0 8px 4px #0005 inset;
+  border-radius: var(--nokia-radius-shape);
+  position: relative;
+  transform: scale(2.85);
+  transform-origin: top center;
+  margin-top: 0.2rem;
+}
+
+.nokia3310.on .screen-container {
+  background: #88c792;
+  filter: drop-shadow(0 0 6px #88c792);
+}
+
+.nokia-head-container {
+  width: 90%;
+  height: 61%;
+  border-radius: 25% 25% 60% 60% / 40% 40% 50% 50%;
+  transform: translateY(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 6px 0 #ddd inset, -8px -16px 0 #ddd inset, -12px -16px 0 #aaa inset, 8px -16px 0 #ddd inset, 12px -16px 0 #eee inset;
+}
+
+.speaker {
+  box-shadow: 6px 0 8px #aaa3 inset, -2px 0 6px #000a inset;
+  margin-top: 8px;
+  margin-bottom: 3px;
+  border-radius: 50%;
+  width: 9px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 2px 0;
+}
+
+.hole {
+  background: #000;
+  width: 4px;
+  height: 2px;
+  border-radius: 50%;
+  box-shadow: 0 0 2px #0009;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 15px;
+  font-family: var(--nokia-logo-font), monospace;
+  font-size: 12px;
+  color: #dfdfda;
+  background: #111;
+  margin-bottom: 8px;
+  border-left: 1px solid #444;
+  border-right: 1px solid #444;
+}
+
+.screen-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #78a47f;
+  width: 106px;
+  height: 78px;
+  border-radius: 8px / 10px 10px 35px 35px;
+  border: 1px solid #000a;
+  border-top: 2px solid #000a;
+  box-shadow: 0 0 8px #000 inset, -4px 0 2px #fff8, 4px 0 2px #2228;
+  overflow: hidden;
+}
+
+.screen-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+.lcd-overlay {
+  position: absolute;
+  inset: 4px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: rgb(14 28 10 / 72%);
+  pointer-events: none;
+}
+
+.lcd-overlay.is-splash {
+  align-content: end;
+  padding-bottom: 8px;
+}
+
+.status-text { opacity: 0.65; margin: 0; }
+
+.win-banner {
+  padding: 4px 6px;
+  border: 2px solid rgb(21 39 16 / 55%);
+  background: rgb(181 205 141 / 86%);
+  box-shadow: inset 0 0 0 1px rgb(245 255 226 / 35%);
+}
+
+.win-banner .title {
+  margin: 0;
+  font-family: var(--nokia-logo-font), monospace;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+
+.win-banner p {
+  margin: 0;
+  font-size: 9px;
+}
+
+.splash .title {
+  margin: 0;
+  font-family: var(--nokia-phone-font), monospace;
+  font-size: 12px;
+}
+
+.splash p { margin: 0; font-size: 10px; }
+
+.bottom-oval {
+  margin-top: auto;
+  width: 100%;
+  height: 50px;
+  background: #ddd;
+  border-radius: 60%;
+  display: flex;
+  justify-content: center;
+}
+
+.big.button.top {
+  background: linear-gradient(110deg, #ddd, #aaa);
+  border: 2px solid #000a;
+  width: 75px;
+  height: 20px;
+  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+  transform: translateY(-4px);
+}
+
+.bottom-buttons {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+}
+
+.big.button.left,
+.big.button.right {
+  border: 2px solid #000a;
+  background-image: linear-gradient(to bottom, #ddd 55%, #aaa);
+  cursor: pointer;
+}
+
+.big.button.left {
+  width: 40px;
+  height: 20px;
+  border-radius: 31px 11px 11px 21px / 22px 20px 20px;
+  transform: translate(5px, 189px) rotate(36deg);
+}
+
+.big.button.left span {
+  display: block;
+  transform: rotate(-35deg) translate(10px, 3px);
+  font-family: var(--nokia-number-font), monospace;
+}
+
+.big.button.right {
+  width: 55px;
+  height: 25px;
+  border-radius: 7px 48px 36px 30px / 5px 16px 11px 15px;
+  transform: translateY(189px) rotate(-34deg) skew(-12deg);
+  display: flex;
+  justify-content: space-around;
+}
+
+.big.button.right span {
+  transform: translateY(4px);
+  font-family: var(--nokia-phone-font), monospace;
+}
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 6px;
+  width: 85%;
+  height: 110px;
+  margin-top: 8px;
+}
+
+.button-key-container { font-family: var(--nokia-number-font), monospace; font-size: 14px; font-weight: 700; }
+.button-key-container:nth-child(1) { transform: translate(-1px, -5px); }
+.button-key-container:nth-child(2) { transform: translate(1px, 0); }
+.button-key-container:nth-child(3) { transform: translate(2px, -5px); }
+.button-key-container:nth-child(4) { transform: translate(2px, -2px); }
+.button-key-container:nth-child(5) { transform: translate(1px, 3px); }
+.button-key-container:nth-child(6) { transform: translate(-1px, -2px); }
+.button-key-container:nth-child(7) { transform: translate(5px, 1px); }
+.button-key-container:nth-child(8) { transform: translate(1px, 6px); }
+.button-key-container:nth-child(9) { transform: translate(-4px, 1px); }
+.button-key-container:nth-child(10) { transform: translate(8px, 4px); }
+.button-key-container:nth-child(11) { transform: translate(1px, 9px); }
+.button-key-container:nth-child(12) { transform: translate(-7px, 4px); }
+
+.button-key {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.button-key::before {
+  content: "";
+  width: 37px;
+  height: 20px;
+  position: absolute;
+  background-image: linear-gradient(#dedee0, #aaa);
+  border: 2px solid #000c;
+  box-shadow: 0 0 3px #0004;
+  z-index: -1;
+}
+
+.button-key.left::before { transform: translateY(-5px) rotate(15deg); border-radius: 33% 67% 43% 36% / 58% 72% 28% 42%; }
+.button-key.middle { transform: translateY(5px); }
+.button-key.middle::before { border-radius: 48% 52% 50% 50% / 40% 40% 60% 60%; }
+.button-key.right::before { transform: translateY(-5px) rotate(-15deg); border-radius: 67% 33% 36% 43% / 72% 58% 42% 28%; }
+
+.button-key span { font-family: var(--nokia-phone-font), monospace; font-size: 8px; }
+.button-key span.special { font-size: 10px; font-weight: 700; }
+.button-key .minitext { transform: translateY(4px); }
+.button-key .minitext.rotate { transform: translateX(4px) rotate(-90deg); }
+.compact { letter-spacing: -4px; }
+
+.phone-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.45rem 0.65rem;
+}
+
+.btn.primary { background: #b8cd8f; }
+.btn.ghost { background: #e0d7c2; }
+.btn.power { background: #8ca4df; color: #fff; }
+.btn:disabled { cursor: not-allowed; opacity: 0.55; }
+
+.down { margin-top: 0.6rem; }
+
+.info,
+.panel {
+  border: 3px solid #181818;
+  background: var(--ui-panel);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px #fff8;
+}
+
+.info {
+  width: 400px;
+  max-width: 450px;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  display: grid;
+  align-content: start;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.info p,
+.info h2 { margin: 0; }
+
+.mode-row { display: grid; gap: 0.4rem; }
+.mode-select-wrap { position: relative; }
+.mode-select-wrap::after { content: "▾"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+
+.mode-row select {
+  width: 100%;
+  border: 3px solid #111;
+  padding: 0.45rem 2rem 0.45rem 0.5rem;
+  background: #efe6d2;
+}
+
+.mode-row select:focus,
+.mode-row select:focus-visible {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 0 #000;
+}
+
+.chip-row { display: grid; gap: 0.45rem; }
+.chip { border: 2px solid #1c1c1c; padding: 0.3rem 0.45rem; background: #f4ecdc; }
+
+.panel { padding: 1rem; overflow: auto; }
+
+.panel h2,
+.control-block h3 { margin-top: 0; }
+
+.controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+.dpad,
+.wasd {
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  grid-template-rows: repeat(2, 52px);
+  gap: 8px;
+  width: max-content;
+}
+
+.dpad .up { grid-column: 2; grid-row: 1; }
+.dpad .left { grid-column: 1; grid-row: 2; }
+.dpad .down { grid-column: 2; grid-row: 2; transform: translateY(-5px); }
+.dpad .right { grid-column: 3; grid-row: 2; }
+
+.wasd .key:nth-child(1) { grid-column: 2; grid-row: 1; }
+.wasd .key:nth-child(2) { grid-column: 1; grid-row: 2; }
+.wasd .key:nth-child(3) { grid-column: 2; grid-row: 2; }
+.wasd .key:nth-child(4) { grid-column: 3; grid-row: 2; }
+
+.key {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  line-height: 1;
+  font-size: 24px;
+  font-family: "VT323", monospace;
+  border: 3px solid #111;
+  background: #d9ceb6;
+  box-shadow: 0 3px 0 #111;
+}
+
+.dpad .key,
+.wasd .key {
+  justify-self: center;
+  align-self: center;
+}
+
+.dpad .key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.key-glyph {
+  display: inline-block;
+  line-height: 1;
+  transform-origin: center;
+}
+
+.key-glyph.dir-up { transform: rotate(0deg); }
+.key-glyph.dir-right { transform: rotate(90deg); }
+.key-glyph.dir-down { transform: rotate(180deg) ; }
+.key-glyph.dir-left { transform: rotate(-90deg); }
+
+.rules { margin: 0; padding-left: 1.2rem; }
+
+.rules-mode-row {
+  margin-bottom: 0.4rem;
+}
+
+.rules-mode-chip {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  padding: 0.25rem 0.55rem;
+  border: 2px solid #1d1d1d;
+  background: #ece2cc;
+}
+
+.rules-primary {
+  margin-bottom: 0.9rem;
+}
+
+.rules-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.rule-card {
+  border: 2px solid #1d1d1d;
+  background: #f4ecdc;
+  padding: 0.55rem 0.65rem;
+}
+
+.rule-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.rule-card p {
+  margin: 0;
+}
+
+.rules-footnote {
+  margin: 0.8rem 0 0;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.rule-card-visual p {
+  margin-bottom: 0.5rem;
+}
+
+.growth-demo {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.growth-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.demo-segment,
+.demo-apple {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #1e1e1e;
+}
+
+.demo-segment {
+  background: #4f6335;
+}
+
+.demo-segment.head {
+  background: #2f3d20;
+}
+
+.demo-apple {
+  background: #7a2f2f;
+  border-radius: 3px;
+}
+
+.demo-note {
+  margin-left: 0.35rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 980px) {
+  .game-layout { flex-direction: column; align-items: center; overflow: auto; }
+  .phone-column,
+  .info {
+    width: min(100%, 560px);
+    max-width: none;
+    flex: 0 0 auto;
+  }
+  .container { height: auto; overflow: visible; }
+  .nokia3310 { transform: scale(2.85); }
+}

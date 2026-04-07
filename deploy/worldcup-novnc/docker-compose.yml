@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: worldcup-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - worldcup_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/worldcup-novnc/Dockerfile
+    container_name: worldcup-novnc
+    environment:
+      DISPLAY: ":1"
+      NOVNC_PORT: ${NOVNC_PORT}
+      VNC_PORT: ${VNC_PORT}
+      WORLDCUP_DB_HOST: ${WORLDCUP_DB_HOST}
+      WORLDCUP_DB_PORT: ${WORLDCUP_DB_PORT}
+      WORLDCUP_DB_NAME: ${WORLDCUP_DB_NAME}
+      WORLDCUP_DB_USER: ${WORLDCUP_DB_USER}
+      WORLDCUP_DB_PASSWORD: ${WORLDCUP_DB_PASSWORD}
+      PORTFOLIO_URL: ${PORTFOLIO_URL}
+      WORLDCUP_PROJECT_DIR: "/workspace/Projects/WorldCup/Projet_Equipe 2"
+    ports:
+      - "${WORLDCUP_WEB_PORT}:6080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  worldcup_pgdata:
+
