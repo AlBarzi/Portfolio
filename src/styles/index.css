@@ -27,7 +27,7 @@ body {
   font-family: "Inter", system-ui, sans-serif;
   background: #0b0f14;
   color: var(--text);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 a {
@@ -813,6 +813,44 @@ a:hover {
 
   .ai-popup-input-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 12px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .app-shell {
+    height: auto;
+    min-height: 100%;
+    gap: 10px;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    flex: unset;
+  }
+
+  .left-rail {
+    height: auto;
+  }
+
+  .hero h1 {
+    font-size: 1.15rem;
+    white-space: normal;
+  }
+
+  .terminal {
+    height: clamp(420px, 72dvh, 600px);
+  }
+
+  .nav-button {
+    min-width: 140px;
   }
 }
 
