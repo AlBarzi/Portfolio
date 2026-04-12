@@ -370,17 +370,21 @@ const useTerminal = () => {
     [getNext, getPrevious, input, runCommand]
   );
 
-  const bootMessage = useMemo(() => [
-    createLine("Welcome to my portfolio terminal.", { typed: true }),
-    createLine("Type 'help' or use the quick command bar above.", { typed: true }),
-  ], []);
-
   const bootedRef = useRef(false);
   useEffect(() => {
     if (bootedRef.current) return;
     bootedRef.current = true;
-    setOutput(bootMessage);
-  }, [bootMessage]);
+
+    setOutput([
+      createLine("Welcome to my portfolio terminal.", { typed: false }),
+    ]);
+
+    const timer = window.setTimeout(() => {
+      void runCommand("help", { simulateTyping: true });
+    }, 600);
+
+    return () => window.clearTimeout(timer);
+  }, []); // intentionally empty — runs once on mount
 
   return {
     promptLabel,
