@@ -23,3 +23,7 @@ venv/
 .env
 .env.*
 !.env.example
+.vercel
+
+# Task tracking — local only
+UPGRADES.md
