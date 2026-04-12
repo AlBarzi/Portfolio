@@ -41,6 +41,8 @@ const gamePaths = {
   worldcup: configuredWorldCupUrl || fallbackWorldCupPath,
 } as const;
 
+const COMPLETABLE_COMMANDS = ["help", "about", "projects", "games", "sudoku", "snake", "minesweeper", "worldcup", "ai", "cv", "clear"];
+
 const useTerminal = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState<TerminalLine[]>([]);
@@ -326,6 +328,19 @@ const useTerminal = () => {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Tab") {
+        event.preventDefault();
+        const partial = input.trim().toLowerCase();
+        if (!partial) return;
+        const matches = COMPLETABLE_COMMANDS.filter((cmd) => cmd.startsWith(partial));
+        if (matches.length === 1) {
+          setInput(matches[0]);
+        } else if (matches.length > 1) {
+          appendLines([createLine(`Tab: ${matches.join("  ")}`, { tone: "muted" })]);
+        }
+        return;
+      }
+
       if (event.key === "Enter") {
         event.preventDefault();
         void runCommand(input);
