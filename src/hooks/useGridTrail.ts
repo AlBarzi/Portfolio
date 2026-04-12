@@ -6,7 +6,7 @@ const FADE_HOLD_MS = 32;
 const FADE_GAP_MS = 60;
 const FADE_START_DELAY_MS = 300;
 
-const useGridTrail = (gridRef: RefObject<HTMLDivElement>) => {
+const useGridTrail = (gridRef: RefObject<HTMLDivElement | null>) => {
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
