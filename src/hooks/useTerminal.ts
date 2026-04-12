@@ -161,7 +161,7 @@ const useTerminal = () => {
         createLine("- about: quick introduction", { typed: true }),
         createLine("- projects: list portfolio projects", { typed: true }),
         createLine("- games: list interactive demos", { typed: true }),
-        createLine("- worldcup: open the Python World Cup app (Pygbag/WASM)", { typed: true }),
+        createLine("- worldcup: World Cup Manager demo (coming soon)", { typed: true }),
         createLine("- ai: AI related work", { typed: true }),
         createLine("- cv: open resume PDF", { typed: true }),
         createLine("- clear: clear terminal output", { typed: true }),
@@ -215,22 +215,13 @@ const useTerminal = () => {
           ),
         ];
       },
-      worldcup: () => {
-        window.setTimeout(() => openInSameTab(gamePaths.worldcup), 320);
-        return [
-          createLine("Launching World Cup Manager (Python + Pygbag)...", { tone: "accent", typed: true }),
-          createLine(
-            `If redirect is blocked, use: <a href="${gamePaths.worldcup}">Open World Cup Manager</a>`,
-            { type: "html" }
-          ),
-        ];
-      },
-      ai: (context) => [
-        (() => {
-          context.openAiPopup();
-          return createLine("Ouverture de la popup IA locale...", { tone: "info", typed: true });
-        })(),
-        createLine("Etape 1: interface uniquement (sans API OpenAI).", { typed: true, tone: "muted" }),
+      worldcup: () => [
+        createLine("World Cup Manager — coming soon.", { tone: "accent", typed: true }),
+        createLine("This interactive demo is currently being set up. Check back later.", { typed: true, tone: "muted" }),
+      ],
+      ai: () => [
+        createLine("AI assistant — coming soon.", { tone: "info", typed: true }),
+        createLine("This feature is currently under development.", { typed: true, tone: "muted" }),
       ],
       cv: () => {
         openCv();

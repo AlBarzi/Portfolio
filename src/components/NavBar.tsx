@@ -14,7 +14,7 @@ const gameItems = [
   { label: "Sudoku", command: "sudoku" },
   { label: "Snake", command: "snake" },
   { label: "Minesweeper", command: "minesweeper" },
-  { label: "WorldCup (Python/Pygbag)", command: "worldcup" },
+  { label: "WorldCup", command: "worldcup" },
 ];
 
 const NavBar = () => {
