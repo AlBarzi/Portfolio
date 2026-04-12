@@ -328,6 +328,12 @@ const useTerminal = () => {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "l" && event.ctrlKey) {
+        event.preventDefault();
+        setOutput([]);
+        return;
+      }
+
       if (event.key === "Tab") {
         event.preventDefault();
         const partial = input.trim().toLowerCase();
