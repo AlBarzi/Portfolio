@@ -3,6 +3,9 @@ import type { CommandHistoryEntry } from "../types/terminal";
 
 let historyId = 0;
 
+const STORAGE_KEY = "ammouri_cmd_history";
+const MAX_HISTORY = 50;
+
 const createHistoryEntry = (input: string): CommandHistoryEntry => ({
   id: `history-${historyId++}`,
   input,
@@ -10,11 +13,27 @@ const createHistoryEntry = (input: string): CommandHistoryEntry => ({
 });
 
 const useCommandHistory = () => {
-  const [entries, setEntries] = useState<CommandHistoryEntry[]>([]);
+  const [entries, setEntries] = useState<CommandHistoryEntry[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      return JSON.parse(raw) as CommandHistoryEntry[];
+    } catch {
+      return [];
+    }
+  });
   const [cursor, setCursor] = useState<number>(-1);
 
   const addEntry = useCallback((input: string) => {
-    setEntries((prev) => [...prev, createHistoryEntry(input)]);
+    setEntries((prev) => {
+      const next = [...prev, createHistoryEntry(input)].slice(-MAX_HISTORY);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // storage quota exceeded — ignore
+      }
+      return next;
+    });
     setCursor(-1);
   }, []);
 
