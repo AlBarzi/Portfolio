@@ -1,0 +1,124 @@
+/* ===============================================================
+   Tokens
+   Une seule source de verite pour la couleur, la typo, l'espace
+   et le mouvement. Aucun composant ne doit ecrire de valeur brute.
+   =============================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Surfaces -------------------------------------------------
+     Echelle d'elevation : 0 = fond de page, 3 = element flottant.
+     Chaque palier est plus clair que le precedent.               */
+  --surface-0: #07090d;
+  --surface-1: #0b0f15;
+  --surface-2: #10151e;
+  --surface-3: #161d28;
+  --surface-glass: rgba(16, 21, 30, 0.72);
+  --surface-overlay: rgba(4, 6, 10, 0.78);
+
+  /* --- Texte ----------------------------------------------------
+     Quatre niveaux seulement. Jamais d'opacity sur du texte :
+     ca derive selon la surface derriere.                         */
+  --text-primary: #eef3fa;
+  --text-secondary: #9daabf;
+  --text-muted: #6c7a91;
+  --text-disabled: #4a5567;
+
+  /* --- Bordures -------------------------------------------------
+     Hairlines en alpha pour rester coherentes sur toute surface. */
+  --border: rgba(148, 173, 210, 0.11);
+  --border-strong: rgba(148, 173, 210, 0.2);
+  --border-stronger: rgba(148, 173, 210, 0.32);
+
+  /* --- Accents --------------------------------------------------
+     Un seul accent primaire (menthe) pour le terminal et la
+     signature de marque. Le bleu est secondaire, reserve aux
+     elements interactifs. Avant, les deux se disputaient le
+     meme role et la hierarchie etait illisible.                  */
+  --accent: #5eead4;
+  --accent-strong: #2dd4bf;
+  --accent-dim: rgba(94, 234, 212, 0.14);
+  --accent-glow: rgba(94, 234, 212, 0.28);
+
+  --interactive: #7cc4fb;
+  --interactive-strong: #a5d8ff;
+  --interactive-dim: rgba(124, 196, 251, 0.12);
+
+  --warning: #fbbf7c;
+  --danger: #f98a8a;
+  --success: #86dfa8;
+
+  /* --- Typographie ----------------------------------------------
+     Echelle modulaire ~1.2. Les tailles fluides utilisent clamp
+     avec des bornes explicites, jamais de vw nu.                 */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: clamp(1.15rem, 0.95rem + 0.7vw, 1.45rem);
+  --text-xl: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.06em;
+  --tracking-wider: 0.12em;
+
+  /* --- Espacement -----------------------------------------------
+     Echelle de 4px. On ne sort pas de cette liste.               */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* --- Rayons ---------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+
+  /* --- Elevation -------------------------------------------------
+     Deux couches : contact rapproche + diffusion large.          */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.44), 0 12px 32px rgba(0, 0, 0, 0.34);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 28px 70px rgba(0, 0, 0, 0.46);
+
+  /* --- Focus -----------------------------------------------------
+     Un seul anneau, partout. Cohere l'accessibilite clavier.     */
+  --focus-ring: 0 0 0 1px var(--surface-0), 0 0 0 3px var(--accent-glow);
+
+  /* --- Mouvement --------------------------------------------------
+     Durees courtes : au-dela de 240ms une UI parait molle.       */
+  --dur-fast: 110ms;
+  --dur-base: 180ms;
+  --dur-slow: 280ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* --- Layout ----------------------------------------------------- */
+  --shell-max: 1280px;
+  --terminal-max-height: 760px;
+}
+
+/* Compatibilite : anciens noms encore reference par le bloc
+   du sabre laser, laisse intact volontairement. */
+:root {
+  --bg: var(--surface-0);
+  --panel: var(--surface-1);
+  --text: var(--text-primary);
+  --glow: var(--accent-glow);
+  --radius-legacy: var(--radius-lg);
+}

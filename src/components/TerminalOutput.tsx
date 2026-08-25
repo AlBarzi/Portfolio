@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { MouseEvent } from "react";
 import { useTerminalContext } from "../state/TerminalContext";
 import TerminalLine from "./TerminalLine";
 
 const TerminalOutput = () => {
-  const { output } = useTerminalContext();
+  const { output, runCommand } = useTerminalContext();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const completedIdsRef = useRef<Set<string>>(new Set());
   const [revealedCount, setRevealedCount] = useState(0);
@@ -63,8 +64,34 @@ const TerminalOutput = () => {
     return () => observer.disconnect();
   }, []);
 
+  /**
+   * Delegation : les lignes riches sont rendues en HTML brut, on ne peut
+   * donc pas leur attacher de handler React. Un seul ecouteur sur le
+   * conteneur suffit, et il continue de fonctionner pour les lignes
+   * ajoutees plus tard.
+   */
+  const onOutputClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-run]");
+      const command = target?.dataset.run;
+      if (!command) return;
+      event.preventDefault();
+      void runCommand(command, { simulateTyping: true });
+    },
+    [runCommand]
+  );
+
   return (
-    <div className="output" ref={scrollRef} role="log" aria-live="polite">
+    // aria-live desactive : la machine a ecrire ajoute le texte mot par
+    // mot, un lecteur d'ecran annoncerait chaque increment. Le role log
+    // suffit pour que le contenu reste explorable.
+    <div
+      className="output"
+      ref={scrollRef}
+      role="log"
+      aria-live="off"
+      onClick={onOutputClick}
+    >
       {visibleLines.map((line) => (
         <TerminalLine
           key={line.id}

@@ -1,5 +1,7 @@
-export type TerminalTone = "muted" | "accent" | "warning" | "info";
+export type TerminalTone = "muted" | "accent" | "warning" | "info" | "success";
 export type TerminalLineType = "text" | "html";
+
+export type Lang = "en" | "fr";
 
 export interface TerminalLine {
   id: string;
@@ -16,11 +18,11 @@ export interface CommandHistoryEntry {
 }
 
 export interface CommandContext {
+  lang: Lang;
   openLink: (href: string) => void;
   openCv: () => void;
   openAiPopup: () => void;
+  setLang: (lang: Lang) => void;
 }
 
 export type CommandHandler = (context: CommandContext) => TerminalLine[] | Promise<TerminalLine[]>;
-
-

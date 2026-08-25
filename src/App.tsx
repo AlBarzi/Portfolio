@@ -4,19 +4,23 @@ import { TerminalProvider } from "./state/TerminalContext";
 import Hero from "./components/Hero";
 import NavBar from "./components/NavBar";
 import Terminal from "./components/Terminal";
+import CommandPalette from "./components/CommandPalette";
 import useSaberEffects from "./hooks/useSaberEffects";
-import useGridTrail from "./hooks/useGridTrail";
+import useDotField from "./hooks/useDotField";
 
 const App = () => {
   const { saberRef } = useSaberEffects();
-  const gridRef = useRef<HTMLDivElement | null>(null);
+  const fieldRef = useRef<HTMLCanvasElement | null>(null);
 
-  useGridTrail(gridRef);
+  useDotField(fieldRef);
 
   return (
     <TerminalProvider>
       <div className="app">
-        <div ref={gridRef} className="background-grid" aria-hidden="true" />
+        <div className="aurora" aria-hidden="true" />
+        <canvas ref={fieldRef} className="bg-field" aria-hidden="true" />
+        <div className="vignette" aria-hidden="true" />
+
         <div className="app-shell">
           <NavBar />
           <div className="content-grid">
@@ -28,6 +32,8 @@ const App = () => {
             </section>
           </div>
         </div>
+
+        <CommandPalette />
         <div id="mouse-saber" ref={saberRef} aria-hidden="true" />
       </div>
     </TerminalProvider>
@@ -35,4 +41,3 @@ const App = () => {
 };
 
 export default App;
-

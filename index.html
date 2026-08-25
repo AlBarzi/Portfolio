@@ -1,21 +1,72 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Portfolio terminal premium de Ramzy">
-  <title>Portfolio - Terminal</title>
+  <meta name="theme-color" content="#07090d">
+
+  <title>Ramzy Youcef Ammouri — Data architecture & full-stack</title>
+  <meta name="description" content="Ramzy Youcef Ammouri — BSc Computer Science, Universite de Montreal. Data architecture, advanced analytics and full-stack development. PostgreSQL, Python, React, TypeScript.">
+  <meta name="author" content="Ramzy Youcef Ammouri">
+
+  <!-- Open Graph : sans ces balises, un lien partage sur LinkedIn
+       s'affiche sans titre, sans image et sans description. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ramzy Youcef Ammouri — Data architecture & full-stack">
+  <meta property="og:description" content="A command-driven portfolio. Type a command or press Cmd+K.">
+  <meta property="og:image" content="/og-image.png">
+  <meta property="og:locale" content="en_CA">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ramzy Youcef Ammouri — Data architecture & full-stack">
+  <meta name="twitter:description" content="A command-driven portfolio. Type a command or press Cmd+K.">
+  <meta name="twitter:image" content="/og-image.png">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://ramzyammouri.com/">
+
+  <!-- Preconnect puis stylesheet : le @import CSS d'origine forcait
+       le navigateur a parser tout le CSS avant de decouvrir la police. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Ramzy Youcef Ammouri",
+      "jobTitle": "Data architect and full-stack developer",
+      "email": "mailto:ramzy.youcef.ammouri@umontreal.ca",
+      "url": "https://ramzyammouri.com/",
+      "sameAs": ["https://github.com/razere"],
+      "alumniOf": "Universite de Montreal",
+      "address": {"@type": "PostalAddress", "addressLocality": "Montreal", "addressRegion": "QC"}
+    }
+  </script>
 </head>
 <body>
+  <!-- Contenu de repli : les crawlers qui n'executent pas JavaScript
+       (LinkedIn, certains bots) voyaient une page vide. React remplace
+       ce bloc au montage. -->
   <div id="root">
-    <main style="min-height:100vh;display:grid;place-items:center;background:#0b0f14;color:#e4ebf5;font-family:Inter,system-ui,sans-serif;padding:24px;text-align:center;">
-      <div>
-        <h1 style="margin:0 0 12px;font-size:1.4rem;">Chargement du portfolio...</h1>
-        <p style="margin:0;opacity:.85;">Si cet ecran reste affiche, redemarrez Vite puis rechargez la page.</p>
+    <main style="min-height:100vh;display:grid;place-items:center;background:#07090d;color:#eef3fa;font-family:Inter,system-ui,sans-serif;padding:24px;text-align:center;">
+      <div style="max-width:34rem;">
+        <h1 style="margin:0 0 8px;font-size:1.6rem;font-weight:600;">Ramzy Youcef Ammouri</h1>
+        <p style="margin:0 0 20px;opacity:.75;">Data architecture &amp; full-stack development</p>
+        <p style="margin:0 0 20px;opacity:.6;font-size:.95rem;">
+          BSc Computer Science, Universite de Montreal (February 2026). I design
+          data architectures and build the systems around them: normalised
+          PostgreSQL schemas, analytical SQL, and full-stack applications in
+          Python, React and TypeScript.
+        </p>
+        <p style="margin:0;font-size:.9rem;opacity:.6;">
+          <a href="https://github.com/razere" style="color:#7cc4fb;">GitHub</a> ·
+          <a href="mailto:ramzy.youcef.ammouri@umontreal.ca" style="color:#7cc4fb;">Email</a> ·
+          <a href="/cv.pdf" style="color:#7cc4fb;">Resume</a>
+        </p>
       </div>
     </main>
   </div>
-  <noscript>This website requires JavaScript to render the terminal interface.</noscript>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

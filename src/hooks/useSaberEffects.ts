@@ -2,6 +2,9 @@ import { useEffect, useRef } from "react";
 
 const SWING_AUDIO_PATH = "/assets/audio/saber-swing.mp3";
 
+/** Doit rester identique a l'URL utilisee par #mouse-saber dans base.css. */
+const SABER_IMAGE_SRC = "https://assets.codepen.io/28337/anakin-skywalker-hor.svg";
+
 const useSaberEffects = () => {
   const saberRef = useRef<HTMLDivElement | null>(null);
 
@@ -13,6 +16,17 @@ const useSaberEffects = () => {
     if (!canHover || !hasFinePointer) {
       return;
     }
+
+    /**
+     * Le curseur systeme n'est masque qu'une fois l'image du sabre
+     * effectivement chargee. Sans ce garde-fou, un bloqueur de contenu
+     * ou une panne du CDN laissait le visiteur sans aucun curseur : le
+     * site devenait litteralement impossible a utiliser.
+     */
+    const saberImage = new Image();
+    const markSaberReady = () => document.documentElement.classList.add("saber-ready");
+    saberImage.addEventListener("load", markSaberReady);
+    saberImage.src = SABER_IMAGE_SRC;
 
     let audioContext: AudioContext | null = null;
     let noiseBuffer: AudioBuffer | null = null;
@@ -188,6 +202,8 @@ const useSaberEffects = () => {
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("blur", onWindowBlur);
+      saberImage.removeEventListener("load", markSaberReady);
+      document.documentElement.classList.remove("saber-ready");
       baseSwingAudio.pause();
       baseSwingAudio.removeEventListener("canplaythrough", onCanPlay);
       baseSwingAudio.removeEventListener("error", onAudioError);

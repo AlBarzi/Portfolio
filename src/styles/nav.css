@@ -1,0 +1,674 @@
+/* ===============================================================
+   Barre de commandes + palette
+
+   La barre a un seul but : rendre le terminal utilisable par
+   quelqu'un qui ne tape pas de commandes. Trois regles la gouvernent.
+
+     1. Rien n'est cache. Pas de menu "...", pas de defilement lateral.
+        Quand la place manque, la barre passe sur deux rangees.
+     2. Chaque bouton dit ce qu'il execute, dans la ligne de statut.
+     3. Un seul indicateur mesure suit l'onglet courant, meme s'il
+        change de rangee.
+   =============================================================== */
+
+.nav {
+  position: relative;
+  z-index: 2;
+  /* Container query : la barre reagit a sa propre largeur, pas a celle
+     du viewport. Elle reste juste meme si la colonne qui la contient
+     change independamment de la fenetre. */
+  container-type: inline-size;
+  container-name: navbar;
+}
+
+.nav-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "sigil tabs actions"
+    "status status status";
+  align-items: center;
+  column-gap: var(--space-3);
+  row-gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Sigle --------------------------------------------------------
+   Deux caracteres suffisent a dire que ces boutons appartiennent au
+   terminal et pas a un menu de site classique.                       */
+
+.nav-sigil {
+  grid-area: sigil;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 28px;
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border-right: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+}
+
+/* Bloc plein plutot que curseur clignotant : le terminal en a deja un,
+   deux carets qui battent en desaccord font du bruit. */
+.nav-sigil-caret {
+  width: 7px;
+  height: 13px;
+  border-radius: 1px;
+  background: color-mix(in oklab, var(--accent) 55%, transparent);
+}
+
+.nav-sigil-label {
+  display: none;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* --- Onglets ------------------------------------------------------ */
+
+.nav-tabs {
+  grid-area: tabs;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  column-gap: 2px;
+  row-gap: 4px;
+  min-width: 0;
+}
+
+.nav-tab {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.25;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.nav-tab:hover,
+.nav-tab:focus-visible {
+  color: var(--text-primary);
+}
+
+.nav-tab[data-active] {
+  color: var(--text-primary);
+}
+
+/* --- Pastilles ----------------------------------------------------
+   Deux elements absolus pour N onglets. Leur geometrie vient de la
+   mesure faite en JS (useTabIndicator) et arrive en variables CSS :
+   X et Y, donc le saut d'une rangee a l'autre est gratuit.            */
+
+.nav-indicator,
+.nav-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+}
+
+.nav-indicator {
+  width: var(--ind-w, 0);
+  height: var(--ind-h, 0);
+  transform: translate3d(var(--ind-x, 0), var(--ind-y, 0), 0);
+  background: color-mix(in oklab, var(--accent) 13%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+  box-shadow: 0 8px 22px -12px var(--accent-glow);
+}
+
+.nav-hover {
+  width: var(--hov-w, 0);
+  height: var(--hov-h, 0);
+  transform: translate3d(var(--hov-x, 0), var(--hov-y, 0), 0);
+  background: color-mix(in oklab, var(--text-primary) 7%, transparent);
+}
+
+.nav-indicator[data-visible],
+.nav-hover[data-visible] {
+  opacity: 1;
+}
+
+/* Les transitions ne sont armees qu'une fois la geometrie connue, sinon
+   la pastille glisse depuis le coin 0,0 a sa premiere apparition. Deux
+   drapeaux distincts : le survol est pret des le montage, la pastille
+   active seulement quand une commande a ete lancee. */
+.nav-indicator[data-armed] {
+  transition: transform 280ms var(--ease-snap), width 280ms var(--ease-snap),
+    height 280ms var(--ease-snap), opacity var(--dur-fast) linear;
+}
+
+.nav-tabs[data-ready] .nav-hover {
+  transition: transform 190ms var(--ease-snap), width 190ms var(--ease-snap),
+    height 190ms var(--ease-snap), opacity var(--dur-fast) linear;
+}
+
+/* --- Ligne de statut ----------------------------------------------
+   L'element qui rend la barre comprehensible sans connaitre le
+   terminal : elle nomme la commande que le bouton survole va lancer.  */
+
+.nav-status {
+  grid-area: status;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-height: 32px;
+  margin: 0 calc(var(--space-2) * -1) calc(var(--space-2) * -1);
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px);
+  background: color-mix(in oklab, #000 26%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  overflow: hidden;
+}
+
+.nav-status-dollar {
+  color: var(--accent);
+}
+
+.nav-status-cmd {
+  color: var(--accent-strong);
+}
+
+.nav-status-sep {
+  color: var(--text-disabled);
+}
+
+.nav-status-text,
+.nav-status-idle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+}
+
+/* Rappels clavier, pousses a droite : la ligne de statut est le seul
+   endroit ou apprendre le terminal sans quitter des yeux la barre. */
+.nav-status-tips {
+  display: flex;
+  gap: var(--space-4);
+  margin-left: auto;
+  padding-left: var(--space-4);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.nav-status-tips b {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.nav[data-busy] .nav-status-cmd {
+  color: var(--warning);
+}
+
+/* --- Actions ------------------------------------------------------- */
+
+.nav-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* Bascule a deux etats visibles : un bouton unique portant "FR"
+   laissait planer le doute sur la langue reellement active. */
+.nav-lang {
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, #000 20%, transparent);
+}
+
+.nav-lang-option {
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  padding: 3px var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.nav-lang-option:hover {
+  color: var(--text-primary);
+}
+
+.nav-lang-option[data-active] {
+  color: var(--text-primary);
+  background: color-mix(in oklab, var(--text-primary) 11%, transparent);
+}
+
+/* --- Barre de commande morphante ------------------------------------
+   Cet element et .palette partagent view-transition-name. Un seul des
+   deux existe a la fois, donc le navigateur les traite comme le meme
+   element qui change de geometrie et interpole entre les deux etats.  */
+
+.nav-command-bar {
+  view-transition-name: command-surface;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  max-width: 280px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--text-primary) 3%, transparent);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.nav-command-bar:hover {
+  color: var(--text-primary);
+  border-color: color-mix(in oklab, var(--accent) 34%, transparent);
+  background: color-mix(in oklab, var(--text-primary) 6%, transparent);
+}
+
+.nav-command-bar-icon {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.nav-command-bar-label,
+.nav-command-bar-label-short {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-command-bar-label-short {
+  display: none;
+}
+
+.nav-kbd,
+.palette-kbd,
+.kbd {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: color-mix(in oklab, var(--text-primary) 5%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+}
+
+/* ===============================================================
+   Adaptation de la barre
+   La bascule se joue sur la largeur du conteneur, pas du viewport.
+   =============================================================== */
+
+/* Palier 1 : le libelle long de la palette ne rentre plus. */
+@container navbar (max-width: 900px) {
+  .nav-command-bar {
+    max-width: 200px;
+  }
+
+  .nav-command-bar-label {
+    display: none;
+  }
+
+  .nav-command-bar-label-short {
+    display: block;
+  }
+}
+
+/* Palier 2 : les onglets prennent toute la largeur sur leur propre
+   rangee et se repartissent en grille. Rien ne disparait. */
+@container navbar (max-width: 760px) {
+  .nav-bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "sigil actions"
+      "tabs tabs"
+      "status status";
+  }
+
+  .nav-sigil {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .nav-sigil-label {
+    display: inline;
+  }
+
+  .nav-actions {
+    justify-content: flex-end;
+  }
+
+  .nav-command-bar {
+    max-width: none;
+    flex: 0 1 auto;
+  }
+
+  /* Grille plutot que flex : des colonnes egales evitent la derniere
+     rangee bancale ou un seul onglet flotte a gauche. */
+  .nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    gap: 4px;
+  }
+
+  .nav-tab {
+    min-width: 0;
+    padding: var(--space-2);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-status-tips {
+    display: none;
+  }
+}
+
+/* Sous ce palier, trois colonnes fixes : "Experience" ne rentre plus
+   dans une colonne calculee par auto-fit et debordait de la barre. */
+@container navbar (max-width: 430px) {
+  .nav-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Sur cette largeur, le libelle de la palette se faisait tronquer.
+     Le sigle et le raccourci clavier sont ce qui sert le moins ici :
+     un telephone n'a pas de touche Commande. */
+  .nav-sigil-label {
+    display: none;
+  }
+
+  .nav-command-bar .nav-kbd {
+    display: none;
+  }
+
+  .nav-tab {
+    font-size: var(--text-xs);
+  }
+
+  .nav-status {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ===============================================================
+   Command palette
+   =============================================================== */
+
+.palette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--surface-overlay);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(var(--space-6), 11vh, 130px) var(--space-4) var(--space-4);
+  animation: palette-fade var(--dur-base) var(--ease-out);
+}
+
+@keyframes palette-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.palette {
+  view-transition-name: command-surface;
+  width: min(620px, 100%);
+  max-height: min(66vh, 520px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  background: var(--surface-3);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Sans View Transitions, on retombe sur une entree classique. */
+@supports not (view-transition-name: none) {
+  .palette {
+    animation: palette-rise var(--dur-slow) var(--ease-snap);
+  }
+}
+
+@keyframes palette-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Courbe et duree du morphing. La palette apparait en fondu par-dessus
+   la pilule pendant que le conteneur change de taille. */
+::view-transition-old(command-surface),
+::view-transition-new(command-surface) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+::view-transition-old(command-surface) {
+  animation-name: surface-fade-out;
+}
+
+::view-transition-new(command-surface) {
+  animation-name: surface-fade-in;
+}
+
+@keyframes surface-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes surface-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.palette-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.palette-search-icon {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  line-height: 1;
+}
+
+.palette-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+}
+
+.palette-input::placeholder {
+  color: var(--text-muted);
+}
+
+.palette-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-stronger) transparent;
+}
+
+.palette-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.palette-list::-webkit-scrollbar-thumb {
+  background: var(--border-stronger);
+  border-radius: var(--radius-pill);
+}
+
+.palette-section + .palette-section {
+  margin-top: var(--space-3);
+}
+
+.palette-section-label {
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-muted);
+}
+
+.palette-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.palette-item[data-active="true"] {
+  background: color-mix(in oklab, var(--text-primary) 6%, transparent);
+  border-color: var(--border-strong);
+}
+
+.palette-item-label {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.palette-item-helper {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette-item-command {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.palette-item[data-active="true"] .palette-item-command {
+  opacity: 1;
+}
+
+.palette-empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.palette-footer {
+  display: flex;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  background: color-mix(in oklab, #000 22%, transparent);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+.palette-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 880px) {
+  .palette-overlay {
+    padding: var(--space-4) var(--space-3);
+    align-items: flex-end;
+  }
+
+  .palette {
+    max-height: 78vh;
+  }
+
+  .palette-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .palette-item-helper {
+    display: none;
+  }
+
+  .palette-footer {
+    display: none;
+  }
+}

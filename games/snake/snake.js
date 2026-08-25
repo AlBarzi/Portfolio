@@ -146,6 +146,12 @@ function drawGrid() {
   }
 }
 
+function getDirectionBetween(from, to) {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  return { x: Math.sign(dx), y: Math.sign(dy) };
+}
+
 function draw() {
   ctx.fillStyle = colors.bg;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -154,15 +160,79 @@ function draw() {
   ctx.fillStyle = colors.apple;
   ctx.fillRect(apple.x * settings.cell + 4, apple.y * settings.cell + 4, settings.cell - 8, settings.cell - 8);
 
-  snake.forEach((segment, index) => {
-    ctx.fillStyle = index === 0 ? colors.head : colors.snake;
-    ctx.fillRect(
-      segment.x * settings.cell + 3,
-      segment.y * settings.cell + 3,
-      settings.cell - 6,
-      settings.cell - 6
-    );
-  });
+  for (let i = 0; i < snake.length; i++) {
+    const segment = snake[i];
+    const prevSegment = i > 0 ? snake[i - 1] : null;
+    const nextSegment = i < snake.length - 1 ? snake[i + 1] : null;
+
+    // Déterminer la direction entrante et sortante
+    let inDir = { x: 0, y: 0 };
+    let outDir = { x: 0, y: 0 };
+
+    if (prevSegment) {
+      inDir = getDirectionBetween(prevSegment, segment);
+    }
+
+    if (nextSegment) {
+      outDir = getDirectionBetween(segment, nextSegment);
+    } else if (prevSegment) {
+      outDir = inDir;
+    }
+
+    // Déterminer le type de segment (droit ou coin)
+    const isStraight = inDir.x === outDir.x && inDir.y === outDir.y;
+    const displayDir = inDir.x !== 0 || inDir.y !== 0 ? inDir : outDir;
+
+    // Position du centre du segment
+    const cx = segment.x * settings.cell + settings.cell / 2;
+    const cy = segment.y * settings.cell + settings.cell / 2;
+    const size = settings.cell - 6;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.fillStyle = i === 0 ? colors.head : colors.snake;
+
+    if (isStraight) {
+      // Segment droit - afficher une barre dans la direction du flux
+      if (displayDir.x !== 0) {
+        // Horizontal
+        ctx.fillRect(-size / 2, -size / 4, size, size / 2);
+      } else {
+        // Vertical
+        ctx.fillRect(-size / 4, -size / 2, size / 2, size);
+      }
+    } else {
+      // Coin - afficher un carré
+      ctx.fillRect(-size / 2, -size / 2, size, size);
+      // Ajouter un triangle pour indiquer la direction
+      ctx.beginPath();
+      if ((inDir.x === 1 && outDir.y === 1) || (inDir.y === 1 && outDir.x === 1)) {
+        // Coin bas-droit
+        ctx.moveTo(size / 2, size / 2);
+        ctx.lineTo(size / 2, 0);
+        ctx.lineTo(0, size / 2);
+      } else if ((inDir.x === -1 && outDir.y === 1) || (inDir.y === 1 && outDir.x === -1)) {
+        // Coin bas-gauche
+        ctx.moveTo(-size / 2, size / 2);
+        ctx.lineTo(-size / 2, 0);
+        ctx.lineTo(0, size / 2);
+      } else if ((inDir.x === -1 && outDir.y === -1) || (inDir.y === -1 && outDir.x === -1)) {
+        // Coin haut-gauche
+        ctx.moveTo(-size / 2, -size / 2);
+        ctx.lineTo(-size / 2, 0);
+        ctx.lineTo(0, -size / 2);
+      } else if ((inDir.x === 1 && outDir.y === -1) || (inDir.y === -1 && outDir.x === 1)) {
+        // Coin haut-droit
+        ctx.moveTo(size / 2, -size / 2);
+        ctx.lineTo(size / 2, 0);
+        ctx.lineTo(0, -size / 2);
+      }
+      ctx.fillStyle = colors.bg;
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
 }
 
 function loop(timestamp) {
