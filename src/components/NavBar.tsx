@@ -4,6 +4,7 @@ import { useTerminalContext } from "../state/TerminalContext";
 import { navCommands } from "../data/commands";
 import useTabIndicator from "../hooks/useTabIndicator";
 import useViewTransition from "../hooks/useViewTransition";
+import { revealTerminal } from "./Terminal";
 
 const isMac =
   typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent);
@@ -44,6 +45,10 @@ const copy = {
   tipHistory: {
     en: "history",
     fr: "historique",
+  },
+  cta: {
+    en: "Work with me",
+    fr: "Travaillons ensemble",
   },
 } as const;
 
@@ -106,6 +111,7 @@ const NavBar = () => {
   const run = useCallback(
     (id: string) => {
       void runCommand(id, { simulateTyping: true });
+      revealTerminal();
     },
     [runCommand]
   );
@@ -155,13 +161,16 @@ const NavBar = () => {
   return (
     <nav className="nav" aria-label={copy.aria[lang]} data-busy={isTyping || undefined}>
       <div className="nav-bar">
-        {/* Sigle : deux caracteres suffisent a annoncer que ces boutons
-            appartiennent au terminal et non a un menu de site classique. */}
-        <span className="nav-sigil" aria-hidden="true">
-          <span className="nav-sigil-glyph">$</span>
-          <span className="nav-sigil-caret" />
-          <span className="nav-sigil-label">{copy.sigil[lang]}</span>
-        </span>
+        {/* Marque : le loup dans une pastille sombre (couleurs d'origine). */}
+        <button
+          type="button"
+          className="nav-sigil"
+          onClick={() => run("about")}
+          aria-label={lang === "en" ? "Home: about me" : "Accueil : a propos"}
+        >
+          <img className="nav-logo" src="/assets/brand/logo.png" alt="" aria-hidden="true" />
+          <span className="nav-sigil-glyph">Ramzy</span>
+        </button>
 
         <div
           className="nav-tabs"
@@ -250,11 +259,26 @@ const NavBar = () => {
               <kbd className="nav-kbd">{isMac ? "⌘" : "Ctrl"}K</kbd>
             </button>
           )}
-        </div>
 
-        {/* Ligne de statut : l'element qui rend la barre comprehensible
-            sans connaitre le terminal. Elle nomme la commande executee. */}
-        <p className="nav-status" aria-live="polite">
+          <button
+            type="button"
+            className="nav-cta"
+            data-magnetic="0.18"
+            onClick={() => run("contact")}
+          >
+            {copy.cta[lang]}
+          </button>
+        </div>
+      </div>
+
+      {/* Ligne de statut : l'element qui rend la barre comprehensible
+          sans connaitre le terminal. Elle nomme la commande executee.
+          La cle force un remontage : le texte glisse a chaque changement. */}
+      <p className="nav-status" aria-live="polite">
+        <span
+          className="nav-status-swap"
+          key={isTyping ? "busy" : hinted ? hinted.id : "idle"}
+        >
           {isTyping ? (
             <>
               <span className="nav-status-dollar" aria-hidden="true">
@@ -269,13 +293,14 @@ const NavBar = () => {
               </span>
               <span className="nav-status-cmd">{hinted.id}</span>
               <span className="nav-status-sep" aria-hidden="true">
-                &mdash;
+                /
               </span>
               <span className="nav-status-text">{hinted.helper[lang]}</span>
             </>
           ) : (
             <span className="nav-status-idle">{copy.idle[lang]}</span>
           )}
+        </span>
 
           {/* Les deux reflexes qu'un visiteur technique va essayer. Les
               annoncer ici evite de les cacher dans `help`. */}
@@ -287,8 +312,7 @@ const NavBar = () => {
               <b>&#8593;</b> {copy.tipHistory[lang]}
             </span>
           </span>
-        </p>
-      </div>
+      </p>
     </nav>
   );
 };

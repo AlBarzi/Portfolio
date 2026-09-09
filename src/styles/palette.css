@@ -1,0 +1,253 @@
+/* ===============================================================
+   Command palette (ilot sombre, voir tokens.css)
+   =============================================================== */
+
+.palette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--surface-overlay);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(var(--space-6), 11vh, 130px) var(--space-4) var(--space-4);
+  animation: palette-fade var(--dur-base) var(--ease-out);
+}
+
+@keyframes palette-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.palette {
+  view-transition-name: command-surface;
+  width: min(620px, 100%);
+  max-height: min(66vh, 520px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  background: var(--surface-3);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Sans View Transitions, on retombe sur une entree classique. */
+@supports not (view-transition-name: none) {
+  .palette {
+    animation: palette-rise var(--dur-slow) var(--ease-snap);
+  }
+}
+
+@keyframes palette-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Courbe et duree du morphing. La palette apparait en fondu par-dessus
+   la pilule pendant que le conteneur change de taille. */
+::view-transition-old(command-surface),
+::view-transition-new(command-surface) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+::view-transition-old(command-surface) {
+  animation-name: surface-fade-out;
+}
+
+::view-transition-new(command-surface) {
+  animation-name: surface-fade-in;
+}
+
+@keyframes surface-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes surface-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.palette-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.palette-search-icon {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  line-height: 1;
+}
+
+.palette-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+}
+
+.palette-input::placeholder {
+  color: var(--text-muted);
+}
+
+.palette-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-stronger) transparent;
+}
+
+.palette-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.palette-list::-webkit-scrollbar-thumb {
+  background: var(--border-stronger);
+  border-radius: var(--radius-pill);
+}
+
+.palette-section + .palette-section {
+  margin-top: var(--space-3);
+}
+
+.palette-section-label {
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-muted);
+}
+
+.palette-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.palette-item[data-active="true"] {
+  background: color-mix(in oklab, var(--text-primary) 6%, transparent);
+  border-color: var(--border-strong);
+}
+
+.palette-item-label {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.palette-item-helper {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette-item-command {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.palette-item[data-active="true"] .palette-item-command {
+  opacity: 1;
+}
+
+.palette-empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.palette-footer {
+  display: flex;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  background: color-mix(in oklab, #000 22%, transparent);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+.palette-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.palette-kbd {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: color-mix(in oklab, var(--text-primary) 5%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 880px) {
+  .palette-overlay {
+    padding: var(--space-4) var(--space-3);
+    align-items: flex-end;
+  }
+
+  .palette {
+    max-height: 78vh;
+  }
+
+  .palette-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .palette-item-helper {
+    display: none;
+  }
+
+  .palette-footer {
+    display: none;
+  }
+}

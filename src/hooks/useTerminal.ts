@@ -13,6 +13,7 @@ import {
   skills,
   strengths,
   worldCupDoc,
+  clients,
 } from "../data/profile";
 import {
   commonPrefix,
@@ -395,6 +396,33 @@ const useTerminal = () => {
         );
 
         return lines;
+      },
+
+      websites: (context) => {
+        const active = context.lang;
+        return [
+          createLine(
+            active === "en"
+              ? `${clients.length} websites shipped to production. Click a domain to open it.`
+              : `${clients.length} sites livres en production. Cliquez un domaine pour l'ouvrir.`,
+            { tone: "muted", typed: true }
+          ),
+          createLine("", {}),
+          ...clients.flatMap((client) => [
+            createLine(
+              `<span class="project-name">${client.name}</span>` +
+                `<span class="project-year">${client.year}</span>`,
+              { type: "html" }
+            ),
+            createLine(
+              `<span class="line-cmd">${client.tag[active]}</span>` +
+                `<span class="line-dash"></span>` +
+                `<a href="${client.url}" target="_blank" rel="noopener noreferrer">${client.domain}</a>`,
+              { type: "html" }
+            ),
+            createLine("", {}),
+          ]),
+        ];
       },
 
       games: (context) => {

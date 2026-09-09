@@ -56,7 +56,9 @@ const TerminalInput = () => {
     const active = document.activeElement;
     if (active && active !== inputElement && isInteractive(active)) return;
     if (active !== inputElement) {
-      inputElement.focus();
+      // Le terminal est sous le hero : le focus ne doit jamais faire
+      // defiler la page a l'insu du visiteur (revealTerminal s'en charge).
+      inputElement.focus({ preventScroll: true });
     }
     const length = inputElement.value.length;
     inputElement.setSelectionRange(length, length);

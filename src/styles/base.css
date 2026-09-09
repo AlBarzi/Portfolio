@@ -20,7 +20,7 @@ body {
   line-height: var(--leading-normal);
   background: var(--surface-0);
   color: var(--text-primary);
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-ligatures: none;
@@ -70,64 +70,11 @@ button {
 }
 
 /* --- Decor de fond ---------------------------------------------
-   Trois couches empilees sous le contenu :
-     1. .aurora   nappes de lumiere CSS, derive tres lente
-     2. .bg-field canvas : champ de points + spotlight curseur
-     3. .vignette assombrissement des bords, ancre le regard
+   Une seule couche sous le contenu : le champ de points (papier
+   millimetre) avec son spotlight curseur. Les nappes de lumiere et
+   la vignette ont disparu : sur fond clair elles faisaient "effet
+   gratuit" au lieu d'ancrer la page.
    ---------------------------------------------------------------- */
-
-.aurora {
-  position: fixed;
-  inset: -20%;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  filter: blur(80px);
-  will-change: transform;
-}
-
-.aurora::before,
-.aurora::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-}
-
-.aurora::before {
-  width: 58vw;
-  height: 58vw;
-  top: 2%;
-  left: -6%;
-  background: radial-gradient(circle, rgba(45, 212, 191, 0.16), transparent 68%);
-  animation: aurora-drift-a 34s var(--ease-out) infinite alternate;
-}
-
-.aurora::after {
-  width: 52vw;
-  height: 52vw;
-  bottom: 0%;
-  right: -8%;
-  background: radial-gradient(circle, rgba(99, 152, 235, 0.15), transparent 68%);
-  animation: aurora-drift-b 41s var(--ease-out) infinite alternate;
-}
-
-@keyframes aurora-drift-a {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(9vw, 7vh, 0) scale(1.14);
-  }
-}
-
-@keyframes aurora-drift-b {
-  from {
-    transform: translate3d(0, 0, 0) scale(1.08);
-  }
-  to {
-    transform: translate3d(-8vw, -6vh, 0) scale(1);
-  }
-}
 
 .bg-field {
   position: fixed;
@@ -137,18 +84,6 @@ button {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-.vignette {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 120% 90% at 50% 45%,
-    transparent 40%,
-    rgba(3, 5, 9, 0.55) 100%
-  );
 }
 
 /* ===============================================================
@@ -240,7 +175,9 @@ button {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
 
   .saber-spark {

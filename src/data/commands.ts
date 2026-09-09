@@ -51,6 +51,14 @@ export const commandRegistry: CommandMeta[] = [
     inNav: true,
   },
   {
+    id: "websites",
+    label: { en: "Websites", fr: "Sites web" },
+    helper: { en: "Live client sites shipped", fr: "Sites clients en production" },
+    group: "navigation",
+    keywords: ["sites", "clients", "web", "marilyns", "bloon", "mare", "gym", "production"],
+    inNav: true,
+  },
+  {
     id: "skills",
     label: { en: "Skills", fr: "Competences" },
     helper: { en: "Languages, DBMS, methods", fr: "Langages, SGBD, methodes" },
@@ -214,6 +222,10 @@ export const commandRegistry: CommandMeta[] = [
 export const commandAliases: Record<string, string> = {
   project: "projects",
   work: "projects",
+  site: "websites",
+  sites: "websites",
+  clients: "websites",
+  web: "websites",
   game: "games",
   demos: "games",
   jeux: "games",

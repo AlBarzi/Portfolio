@@ -35,6 +35,20 @@ export const profile = {
   isAvailable: true,
   promptHost: "ammouri@portfolio",
 
+  /** Titre d'affiche du hero, en trois lignes. */
+  headline: {
+    en: { pixel: "Data architect", solid: "& Full-stack", outline: "Developer" },
+    fr: { pixel: "Architecte data", solid: "& Full-stack", outline: "Developpeur" },
+  },
+  intro: {
+    en: "Hi, my name is Ramzy and I am a",
+    fr: "Salut, je m'appelle Ramzy et je suis",
+  },
+  tagline: {
+    en: "Designing normalised schemas and the systems that query them, so data feels a little more honest.",
+    fr: "Je concois des schemas normalises et les systemes qui les interrogent, pour des donnees un peu plus honnetes.",
+  },
+
   /** Resume du profil, repris du CV. */
   summary: {
     en: "I design data architectures and build the systems around them. My focus is complex databases, advanced analytics and full-stack engineering — from entity-relationship modelling through to the application that queries it. I look for problems where the schema is the hard part.",
@@ -109,6 +123,63 @@ export const strengths = {
   en: ["Complex problem solving", "Patience", "Communication", "Reliability", "Proactivity"],
   fr: ["Resolution de problemes complexes", "Patience", "Communication", "Fiabilite", "Proactivite"],
 };
+
+export interface Client {
+  id: string;
+  name: string;
+  url: string;
+  domain: string;
+  tag: { en: string; fr: string };
+  year: string;
+  /** Capture hebergee dans public/. */
+  image: string;
+  /** Couleur de marque : sert au repli si la capture ne charge pas. */
+  tone: string;
+}
+
+/** Sites livres en production. Captures locales dans public/assets/sites. */
+export const clients: Client[] = [
+  {
+    id: "marilyns",
+    name: "Marilyn's",
+    url: "https://marilyns.club/",
+    domain: "marilyns.club",
+    tag: { en: "Bar & club", fr: "Bar & club" },
+    year: "2025",
+    image: "/assets/sites/marilyns.webp",
+    tone: "#3a0f1a",
+  },
+  {
+    id: "bloon",
+    name: "Bloon One",
+    url: "https://bloon-one.app/",
+    domain: "bloon-one.app",
+    tag: { en: "Web app", fr: "Application web" },
+    year: "2025",
+    image: "/assets/sites/bloon.webp",
+    tone: "#1f4b8f",
+  },
+  {
+    id: "corner",
+    name: "The Corner Gym",
+    url: "https://gymthecorner.com/",
+    domain: "gymthecorner.com",
+    tag: { en: "Fitness", fr: "Salle de sport" },
+    year: "2024",
+    image: "/assets/sites/corner.webp",
+    tone: "#1c1c1c",
+  },
+  {
+    id: "mare",
+    name: "Mare",
+    url: "https://maremtl.ca/",
+    domain: "maremtl.ca",
+    tag: { en: "Restaurant", fr: "Restaurant" },
+    year: "2024",
+    image: "/assets/sites/mare.webp",
+    tone: "#2f5d4a",
+  },
+];
 
 export interface Project {
   id: string;

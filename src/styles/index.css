@@ -8,4 +8,6 @@
 @import "./base.css";
 @import "./layout.css";
 @import "./nav.css";
+@import "./palette.css";
 @import "./terminal.css";
+@import "./motion.css";

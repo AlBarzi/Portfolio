@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Site mono-page : tout chemin inconnu retombe sur index.html.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,56 +1,71 @@
+import type { CSSProperties } from "react";
 import { useTerminalContext } from "../state/TerminalContext";
-import { links, profile, skills } from "../data/profile";
+import { profile } from "../data/profile";
+import { revealTerminal } from "./Terminal";
+import SplitText from "./SplitText";
 
-const railLinks = links.filter((link) => link.id !== "phone");
-const dataStack = skills.find((group) => group.id === "data")?.items.slice(0, 5) ?? [];
+const stagger = (step: number) => ({ "--d": step } as CSSProperties);
 
 /**
- * Rail gauche : identite, disponibilite, stack donnees, liens directs.
+ * Hero d'affiche : intro, titre en trois lignes (pixel, plein, evide),
+ * accroche, deux actions. Le pied editorial vit desormais en bas de
+ * page (voir HeroFoot) : le hero reste epure et pleine hauteur.
  */
 const Hero = () => {
   const { lang, runCommand } = useTerminalContext();
+  const headline = profile.headline[lang];
+
+  const run = (id: string) => {
+    void runCommand(id, { simulateTyping: true });
+    revealTerminal();
+  };
 
   return (
     <header className="hero">
-      <div className="hero-identity">
-        <p className="hero-eyebrow">{profile.role[lang]}</p>
-        <h1 className="hero-name">{profile.name}</h1>
-        <p className="hero-degree">{profile.degree[lang]}</p>
-        <p className="hero-graduated">{profile.graduated[lang]}</p>
+      <p className="hero-intro" style={stagger(0)}>
+        <span className="hero-wave" aria-hidden="true">
+          &#10035;
+        </span>
+        {profile.intro[lang]}
+      </p>
+
+      {/* key={lang} : le titre rejoue son entree quand la langue change. */}
+      <h1 className="hero-title" key={lang}>
+        <span className="hero-title-line">
+          <SplitText className="hero-title-pixel" text={headline.pixel} />
+        </span>
+        <span className="hero-title-line">
+          <SplitText className="hero-title-solid" text={headline.solid} />
+        </span>
+        <span className="hero-title-line">
+          <SplitText
+            className="hero-title-outline"
+            text={headline.outline}
+            offset={headline.solid.length}
+          />
+        </span>
+      </h1>
+
+      <p className="hero-tagline" style={stagger(1)}>
+        {profile.tagline[lang]}
+      </p>
+
+      <div className="hero-actions" style={stagger(2)}>
+        <button type="button" className="btn btn-solid" data-magnetic onClick={() => run("cv")}>
+          <span className="btn-label">{lang === "en" ? "Open resume" : "Ouvrir le CV"}</span>
+          <span className="btn-arrow" aria-hidden="true">
+            &#8599;
+          </span>
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline"
+          data-magnetic
+          onClick={() => run("contact")}
+        >
+          <span className="btn-label">{lang === "en" ? "Say hello" : "Dire bonjour"}</span>
+        </button>
       </div>
-
-      {profile.isAvailable && (
-        <p className="hero-status">
-          <span className="hero-status-dot" aria-hidden="true" />
-          {profile.availability[lang]}
-        </p>
-      )}
-
-      <ul className="hero-stack" aria-label={lang === "en" ? "Core stack" : "Stack principale"}>
-        {dataStack.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-
-      <div className="hero-links">
-        {railLinks.map((link) => (
-          <a key={link.id} href={link.href} target="_blank" rel="noopener noreferrer">
-            <span className="hero-link-label">{link.label}</span>
-            <span className="hero-link-handle">{link.handle}</span>
-            <span className="hero-link-arrow" aria-hidden="true">
-              &#8599;
-            </span>
-          </a>
-        ))}
-      </div>
-
-      <button
-        type="button"
-        className="hero-cta"
-        onClick={() => void runCommand("cv", { simulateTyping: true })}
-      >
-        {lang === "en" ? "Open resume" : "Ouvrir le CV"}
-      </button>
     </header>
   );
 };

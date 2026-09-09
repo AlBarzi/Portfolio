@@ -1,0 +1,584 @@
+/* ===============================================================
+   Mouvement
+   Toutes les animations de la page, au meme endroit.
+
+   Trois familles :
+     1. Entree : ce qui se joue au chargement (nav, hero, lettres).
+     2. Defilement : [data-reveal] -> [data-inview] (useReveal).
+     3. Curseur : parallaxe (--mx/--my), magnetisme (--mag-*), tilt.
+   Le bloc "mouvement reduit" de base.css neutralise tout d'un coup.
+   =============================================================== */
+
+/* --- Courbes et durees ------------------------------------------ */
+:root {
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --intro-base: 120ms;
+}
+
+/* --- Barre de progression ---------------------------------------- */
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--scroll, 0));
+  pointer-events: none;
+}
+
+/* ===============================================================
+   1. Entree
+   =============================================================== */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nav-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes char-rise {
+  from {
+    opacity: 0;
+    transform: translateY(110%) rotate(6deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes char-type {
+  from {
+    opacity: 0;
+    transform: translateY(0.25em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav {
+  animation: nav-drop 800ms var(--ease-expo) both;
+}
+
+.nav-status {
+  animation: rise-in 700ms var(--ease-expo) both;
+  animation-delay: 420ms;
+}
+
+/* Le hero se deplie de haut en bas : chaque bloc porte --d (0..3). */
+.hero-intro,
+.hero-tagline,
+.hero-actions,
+.hero-foot {
+  animation: rise-in 900ms var(--ease-expo) both;
+  animation-delay: calc(var(--intro-base) + var(--d, 0) * 160ms + 520ms);
+}
+
+.hero-intro {
+  animation-delay: var(--intro-base);
+}
+
+/* Chaque ligne du titre est un masque : les lettres montent depuis
+   dessous, en cascade. */
+.hero-title-line {
+  display: block;
+  overflow: hidden;
+  padding: 0.04em 0.06em 0.08em;
+  margin: -0.04em -0.06em -0.08em;
+}
+
+.hero-title .char {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+
+.hero-title-pixel .char {
+  animation: char-type 10ms steps(1) both;
+  animation-delay: calc(var(--intro-base) + 260ms + var(--i) * 42ms);
+}
+
+.hero-title-solid .char,
+.hero-title-outline .char {
+  animation: char-rise 900ms var(--ease-expo) both;
+  animation-delay: calc(var(--intro-base) + 560ms + var(--i) * 26ms);
+}
+
+/* Le hero reste strictement immobile : ni parallaxe, ni derive. */
+
+/* ===============================================================
+   2. Defilement
+   =============================================================== */
+
+/* Filet de section : se trace de gauche a droite. */
+.section-rule {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1100ms var(--ease-expo) 120ms;
+}
+
+[data-inview] .section-rule {
+  transform: scaleX(1);
+}
+
+.fan-head,
+.sites-head,
+.stage-head {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms var(--ease-expo), transform 700ms var(--ease-expo);
+}
+
+[data-inview] .fan-head,
+[data-inview] .sites-head,
+[data-inview] .stage-head {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Eventail : distribue depuis la pile ---------------------------
+   Avant revelation, les six cartes sont empilees au centre, droites et
+   basses. A l'entree dans le viewport elles se deploient une a une. */
+
+.fan:not([data-inview]) .fan-slot {
+  opacity: 0;
+  transform: translateX(0) translateY(60px) rotate(0deg) scale(0.9);
+}
+
+.fan-slot {
+  transition: transform 900ms var(--ease-expo) calc(var(--fan-i) * 70ms),
+    opacity 600ms var(--ease-out) calc(var(--fan-i) * 70ms), z-index 0s;
+}
+
+/* Une fois deployee, le survol repond vite. */
+.fan[data-inview] .fan-slot:hover,
+.fan[data-inview] .fan-slot:focus-within {
+  transition-delay: 0s;
+  transition-duration: 380ms;
+}
+
+/* Inclinaison 3D + reflet suivant le curseur (ProjectFan.onTilt). */
+.fan-card {
+  position: relative;
+  overflow: hidden;
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 260ms var(--ease-out), box-shadow 360ms var(--ease-snap);
+  transform-style: preserve-3d;
+}
+
+.fan-card-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--shine-x, 50%) var(--shine-y, 50%),
+    rgba(255, 255, 255, 0.28),
+    transparent 46%
+  );
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+  pointer-events: none;
+}
+
+.fan-slot:hover .fan-card-shine {
+  opacity: 1;
+}
+
+.fan-card-index,
+.fan-card-body,
+.fan-card-cmd {
+  position: relative;
+  transform: translateZ(1px);
+}
+
+/* Le libelle de commande apparait au survol, comme une invite. */
+.fan-card-cmd {
+  opacity: 0.55;
+  transform: translateY(4px);
+  transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out);
+}
+
+.fan-slot:hover .fan-card-cmd,
+.fan-slot:focus-within .fan-card-cmd {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Sites : revelation en cascade + survol ---------------------- */
+
+.site-slot {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity 700ms var(--ease-expo) calc(var(--stagger, 0) * 90ms),
+    transform 800ms var(--ease-expo) calc(var(--stagger, 0) * 90ms);
+}
+
+.site-slot[data-inview] {
+  opacity: 1;
+  transform: none;
+}
+
+.site-card {
+  transition: transform 400ms var(--ease-expo), box-shadow 400ms var(--ease-expo),
+    border-color 400ms var(--ease-expo);
+}
+
+.site-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--ink);
+  box-shadow: var(--shadow-lg);
+}
+
+.site-shot img {
+  transition: transform 800ms var(--ease-expo);
+}
+
+.site-card:hover .site-shot img {
+  transform: scale(1.05);
+}
+
+/* Le bouton "voir le site" surgit au survol de la carte. */
+.site-open {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-expo);
+}
+
+.site-card:hover .site-open,
+.site-card:focus-visible .site-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Les pastilles du chrome s'allument aux couleurs macOS au survol. */
+.site-card:hover .site-dots span:nth-child(1) {
+  background: #ff5f57;
+}
+
+.site-card:hover .site-dots span:nth-child(2) {
+  background: #febc2e;
+}
+
+.site-card:hover .site-dots span:nth-child(3) {
+  background: #28c840;
+}
+
+.site-dots span {
+  transition: background 300ms var(--ease-out);
+}
+
+/* --- Zigzag : la dentelure avance lentement ---------------------- */
+
+@keyframes zig-slide {
+  to {
+    background-position: 14px 0, 14px 0;
+  }
+}
+
+.zigzag {
+  animation: zig-slide 1.6s linear infinite;
+}
+
+/* --- Scene du terminal ------------------------------------------- */
+
+.device {
+  opacity: 0;
+  transform: translateY(40px) scale(0.965);
+  transition: opacity 900ms var(--ease-expo), transform 1100ms var(--ease-expo);
+}
+
+[data-inview] .device {
+  opacity: 1;
+  transform: none;
+}
+
+/* La note manuscrite surgit, puis la fleche se trace. */
+.stage-note {
+  opacity: 0;
+  transform: rotate(-10deg) translateY(10px) scale(0.9);
+  transition: opacity 500ms var(--ease-out) 500ms, transform 700ms var(--ease-back) 500ms;
+}
+
+[data-inview] .stage-note {
+  opacity: 1;
+  transform: rotate(-4deg) translateY(0) scale(1);
+}
+
+.stage-note-arrow path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  transition: stroke-dashoffset 900ms var(--ease-expo) 900ms;
+}
+
+.stage-note-arrow path:last-child {
+  transition-delay: 1500ms;
+  transition-duration: 400ms;
+}
+
+[data-inview] .stage-note-arrow path {
+  stroke-dashoffset: 0;
+}
+
+/* --- Pied de page ------------------------------------------------- */
+
+.footer {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 800ms var(--ease-expo), transform 800ms var(--ease-expo);
+}
+
+.footer[data-inview] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===============================================================
+   3. Curseur et survols
+   =============================================================== */
+
+/* Magnetisme : --mag-x/--mag-y viennent de useMagnetic. */
+[data-magnetic] {
+  transform: translate(var(--mag-x, 0px), var(--mag-y, 0px));
+  transition: transform 260ms var(--ease-out), background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+
+.btn:active {
+  transform: translate(var(--mag-x, 0px), calc(var(--mag-y, 0px) + 1px)) scale(0.985);
+}
+
+/* Le libelle du bouton glisse et la fleche prend sa place. */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-label {
+  display: inline-block;
+  transition: transform 360ms var(--ease-expo);
+}
+
+.btn-arrow {
+  display: inline-block;
+  transition: transform 360ms var(--ease-expo);
+}
+
+.btn:hover .btn-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* Fond qui monte au survol du bouton contour. */
+.btn-outline::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: translateY(101%);
+  transition: transform 420ms var(--ease-expo);
+  z-index: -1;
+}
+
+.btn-outline {
+  isolation: isolate;
+}
+
+.btn-outline:hover {
+  color: #ffffff;
+  background: transparent;
+}
+
+.btn-outline:hover::before {
+  transform: translateY(0);
+}
+
+/* Liens : soulignement qui se trace depuis la gauche. */
+.hero-links a,
+.footer-links a {
+  position: relative;
+}
+
+.hero-links a::after,
+.footer-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 360ms var(--ease-expo);
+}
+
+.hero-links a:hover,
+.footer-links a:hover {
+  text-decoration: none;
+}
+
+.hero-links a:hover::after,
+.footer-links a:hover::after {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+}
+
+/* Puces de stack : leger soulevement en cascade au survol du groupe. */
+.hero-stack li {
+  transition: transform 300ms var(--ease-back), border-color 200ms var(--ease-out),
+    background 200ms var(--ease-out);
+}
+
+.hero-stack li:hover {
+  transform: translateY(-3px);
+  border-color: var(--ink);
+}
+
+/* --- Pilule de nav ------------------------------------------------ */
+
+/* La pilule se resserre une fois la page defilee. */
+.nav-bar {
+  transition: padding 360ms var(--ease-expo), box-shadow 360ms var(--ease-expo),
+    background 360ms var(--ease-expo), transform 360ms var(--ease-expo);
+}
+
+:root[data-scrolled] .nav-bar {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  box-shadow: var(--shadow-lg);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* Onglets : leger soulevement sous le curseur. */
+.nav-tab {
+  transition: color var(--dur-fast) var(--ease-out), transform 240ms var(--ease-back);
+}
+
+.nav-tab:hover {
+  transform: translateY(-1px);
+}
+
+/* Statut : le nouveau texte glisse depuis le bas. */
+@keyframes status-swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-status-swap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  animation: status-swap 320ms var(--ease-expo) both;
+}
+
+/* Bouton palette : le chevron avance au survol. */
+.nav-command-bar-icon {
+  display: inline-block;
+  transition: transform 240ms var(--ease-back);
+}
+
+.nav-command-bar:hover .nav-command-bar-icon {
+  transform: translateX(3px);
+}
+
+/* Cartes et boutons ne bougent plus quand le curseur n'est pas fin. */
+@media (hover: none) {
+  .fan-card {
+    transform: none;
+  }
+}
+
+/* ===============================================================
+   Bandeau defilant
+   =============================================================== */
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  overflow: hidden;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding-right: var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.marquee-item::after {
+  content: "\2733";
+  color: var(--accent);
+  font-size: 0.8em;
+}
+
+@media (max-width: 880px) {
+  .marquee {
+    margin-top: 0;
+  }
+
+  .marquee-track {
+    animation-duration: 28s;
+  }
+
+  /* Sur mobile l'eventail est une rangee : les cartes glissent
+     simplement depuis la droite. */
+  .fan:not([data-inview]) .fan-slot {
+    transform: translateX(32px);
+  }
+
+  .hero-title {
+    transform: none;
+  }}

@@ -35,7 +35,7 @@ interface Rgb {
 }
 
 const readAccent = (): Rgb => {
-  const fallback: Rgb = { r: 94, g: 234, b: 212 };
+  const fallback: Rgb = { r: 224, g: 69, b: 42 };
   if (typeof window === "undefined") return fallback;
 
   const raw = getComputedStyle(document.documentElement)
@@ -89,7 +89,7 @@ const useDotField = (canvasRef: RefObject<HTMLCanvasElement>) => {
       baseContext.setTransform(1, 0, 0, 1, 0, 0);
       baseContext.scale(dpr, dpr);
       baseContext.clearRect(0, 0, width, height);
-      baseContext.fillStyle = "rgba(148, 173, 210, 0.085)";
+      baseContext.fillStyle = "rgba(17, 17, 17, 0.11)";
 
       for (let row = 0; row <= rows; row += 1) {
         for (let col = 0; col <= cols; col += 1) {
