@@ -1,0 +1,438 @@
+/* ===============================================================
+   Barre de commandes : pilule flottante
+
+   La barre garde son unique but : rendre le terminal utilisable par
+   quelqu'un qui ne tape pas de commandes. Trois regles la gouvernent.
+
+     1. Rien n'est cache. Quand la place manque, la pilule passe sur
+        deux rangees au lieu d'enterrer des onglets dans un menu.
+     2. Chaque bouton dit ce qu'il execute, dans la ligne de statut
+        posee sous la pilule.
+     3. Un seul indicateur mesure suit l'onglet courant, meme s'il
+        change de rangee.
+   =============================================================== */
+
+.nav {
+  position: sticky;
+  top: var(--space-4);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  container-type: inline-size;
+  container-name: navbar;
+}
+
+.nav-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "sigil tabs actions";
+  align-items: center;
+  column-gap: var(--space-3);
+  row-gap: var(--space-2);
+  width: min(100%, 1180px);
+  padding: 6px 6px 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+  backdrop-filter: blur(18px) saturate(120%);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- Monogramme ----------------------------------------------------- */
+
+.nav-sigil {
+  grid-area: sigil;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-3) 0 var(--space-1);
+  border: none;
+  background: transparent;
+  font-weight: 800;
+  font-size: var(--text-md);
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* Loup detoure : la marque, a gauche du nom. */
+.nav-logo {
+  height: 24px;
+  width: auto;
+  display: block;
+  transition: transform 240ms var(--ease-back);
+}
+
+.nav-sigil:hover .nav-logo {
+  transform: rotate(-6deg) scale(1.08);
+}
+
+/* Le point rouge : seul accent de la pilule, aligne sur la ligne de base. */
+.nav-sigil-caret {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* --- Onglets ------------------------------------------------------ */
+
+.nav-tabs {
+  grid-area: tabs;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  column-gap: 2px;
+  row-gap: 4px;
+  min-width: 0;
+}
+
+.nav-tab {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) 10px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.nav-tab:hover,
+.nav-tab:focus-visible {
+  color: var(--text-primary);
+}
+
+.nav-tab[data-active] {
+  color: #ffffff;
+}
+
+/* --- Pastilles ----------------------------------------------------
+   Deux elements absolus pour N onglets. Leur geometrie vient de la
+   mesure faite en JS (useTabIndicator) et arrive en variables CSS.  */
+
+.nav-indicator,
+.nav-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: var(--radius-pill);
+  opacity: 0;
+}
+
+.nav-indicator {
+  width: var(--ind-w, 0);
+  height: var(--ind-h, 0);
+  transform: translate3d(var(--ind-x, 0), var(--ind-y, 0), 0);
+  background: var(--ink);
+  box-shadow: 0 6px 16px -10px rgba(17, 17, 17, 0.7);
+}
+
+.nav-hover {
+  width: var(--hov-w, 0);
+  height: var(--hov-h, 0);
+  transform: translate3d(var(--hov-x, 0), var(--hov-y, 0), 0);
+  background: var(--interactive-dim);
+}
+
+.nav-indicator[data-visible],
+.nav-hover[data-visible] {
+  opacity: 1;
+}
+
+.nav-indicator[data-armed] {
+  transition: transform 280ms var(--ease-snap), width 280ms var(--ease-snap),
+    height 280ms var(--ease-snap), opacity var(--dur-fast) linear;
+}
+
+.nav-tabs[data-ready] .nav-hover {
+  transition: transform 190ms var(--ease-snap), width 190ms var(--ease-snap),
+    height 190ms var(--ease-snap), opacity var(--dur-fast) linear;
+}
+
+/* --- Actions ------------------------------------------------------- */
+
+.nav-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* Bascule de langue a la maniere d'un site editorial : deux libelles,
+   l'actif souligne. */
+.nav-lang {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+}
+
+.nav-lang-option {
+  border: none;
+  background: transparent;
+  padding: 4px 4px 2px;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+  border-bottom: 1.5px solid transparent;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.nav-lang-option:hover {
+  color: var(--text-primary);
+}
+
+.nav-lang-option[data-active] {
+  color: var(--text-primary);
+  border-bottom-color: var(--ink);
+}
+
+/* Bouton palette : partage son view-transition-name avec la palette. */
+.nav-command-bar {
+  view-transition-name: command-surface;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  min-width: 0;
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.nav-command-bar:hover {
+  color: var(--text-primary);
+  border-color: var(--ink);
+}
+
+.nav-command-bar-icon {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.nav-command-bar-label,
+.nav-command-bar-label-short {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-command-bar-label-short {
+  display: none;
+}
+
+.nav-kbd,
+.kbd {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+}
+
+/* Le bouton plein de la maquette : noir, pilule, un seul par page. */
+.nav-cta {
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #ffffff;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.nav-cta:hover {
+  background: var(--ink-soft);
+}
+
+.nav-cta:active {
+  transform: translateY(1px);
+}
+
+/* --- Ligne de statut ----------------------------------------------
+   Petite pilule sous la grande. Elle nomme la commande que le bouton
+   survole va lancer, et garde un fond : la nav est collante, le texte
+   passerait sinon par-dessus le contenu qui defile.                  */
+
+.nav-status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  max-width: min(100%, 720px);
+  min-height: 24px;
+  padding: 3px var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  backdrop-filter: blur(18px) saturate(120%);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  overflow: hidden;
+}
+
+.nav-status-dollar,
+.nav-status-cmd {
+  color: var(--text-primary);
+}
+
+.nav-status-sep {
+  color: var(--text-disabled);
+}
+
+.nav-status-text,
+.nav-status-idle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+}
+
+.nav-status-tips {
+  display: flex;
+  gap: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.nav-status-tips b {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.nav[data-busy] .nav-status-cmd {
+  color: var(--accent);
+}
+
+/* ===============================================================
+   Adaptation de la barre (largeur du conteneur, pas du viewport)
+   =============================================================== */
+
+/* Palier 1 : le libelle long de la palette ne rentre plus. */
+@container navbar (max-width: 1100px) {
+  .nav-command-bar-label {
+    display: none;
+  }
+
+  .nav-command-bar-label-short {
+    display: block;
+  }
+}
+
+/* Palier 2 : les onglets prennent leur propre rangee. La pilule devient
+   une carte arrondie : une pilule a deux etages n'en est plus une. */
+@container navbar (max-width: 760px) {
+  .nav-bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "sigil actions"
+      "tabs tabs";
+    border-radius: var(--radius-xl);
+    padding: var(--space-2);
+  }
+
+  .nav-actions {
+    justify-content: flex-end;
+  }
+
+  .nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    gap: 4px;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    min-width: 0;
+    padding: var(--space-2);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-status-tips {
+    display: none;
+  }
+}
+
+@container navbar (max-width: 520px) {
+  .nav-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nav-command-bar .nav-kbd,
+  .nav-command-bar-label-short {
+    display: none;
+  }
+
+  .nav-command-bar {
+    padding: 0 var(--space-3);
+  }
+
+  .nav-cta {
+    padding: 0 var(--space-3);
+    font-size: var(--text-xs);
+  }
+
+  .nav-tab {
+    font-size: var(--text-xs);
+  }
+}
+
+/* Sur telephone la pilule fait deux etages : collee en haut, elle
+   mangerait un tiers de l'ecran. Elle defile avec la page. */
+@media (max-width: 880px) {
+  .nav {
+    position: static;
+  }
+}

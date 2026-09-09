@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Minesweeper retro jouable dans le navigateur">
+  <title>Minesweeper - Ammouri</title>
+  <link rel="stylesheet" href="minesweeper.css">
+</head>
+<body>
+  <header class="page-header">
+    <a class="back-link" href="../../index.html">&lt;- Back to terminal</a>
+    <div>
+      <h1>Minesweeper</h1>
+      <p class="subtitle">Classic retro board</p>
+    </div>
+  </header>
+
+  <main class="ms-wrapper">
+    <section class="ms-shell" aria-label="Minesweeper game">
+      <noscript>
+        <p>Le jeu a besoin de JavaScript pour s'afficher.</p>
+      </noscript>
+      <div class="ms-top">
+        <div class="ms-counter" id="mine-counter">000</div>
+        <button class="ms-face" id="face" type="button" aria-label="New game"></button>
+        <div class="ms-counter" id="time-counter">000</div>
+      </div>
+
+      <div class="ms-board" id="board" role="grid" aria-label="Minesweeper board"></div>
+
+      <div class="ms-bottom">
+        <label class="ms-level">
+          <span>Level</span>
+          <select id="level">
+            <option value="easy">Easy 9x9</option>
+            <option value="medium">Medium 16x16</option>
+            <option value="hard">Hard 16x30</option>
+          </select>
+        </label>
+        <p class="ms-status" id="status">Left click to reveal. Right click to flag.</p>
+      </div>
+    </section>
+
+    <section class="ms-help">
+      <h2>Controls</h2>
+      <ul>
+        <li>Left click: reveal a tile</li>
+        <li>Right click: place or remove a flag</li>
+        <li>Double click a number to reveal its neighbors</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="minesweeper.js"></script>
+</body>
+</html>
+

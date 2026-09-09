@@ -1,0 +1,829 @@
+/* ===============================================================
+   Layout : page, hero d'affiche, eventail, scene du terminal, pied
+   =============================================================== */
+
+.app {
+  position: relative;
+  min-height: 100dvh;
+  padding: var(--space-5) var(--space-8) var(--space-8);
+  display: flex;
+  justify-content: center;
+}
+
+.app-shell {
+  width: min(var(--shell-max), 100%);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Feuille de contenu : elle remonte par-dessus le hero epingle. Fond
+   blanc plein (le hero, lui, laisse voir le papier millimetre), coins
+   arrondis et ombre portee vers le haut pour marquer le bord qui glisse. */
+.sheet {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-12), 8vh, 96px);
+  padding: clamp(var(--space-10), 7vh, 84px) var(--space-6)
+    clamp(var(--space-10), 7vh, 84px);
+  background: var(--surface-1);
+  border-top: 1px solid var(--border);
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 -30px 60px -34px rgba(17, 17, 17, 0.4);
+}
+
+/* --- En-tetes de section ---------------------------------------------
+   Un index, un filet, un compteur : la ponctuation editoriale qui rend
+   la page lisible d'un coup d'oeil sans crier.                          */
+
+.fan-head,
+.sites-head,
+.stage-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border-strong);
+}
+
+.section-count {
+  color: var(--text-primary);
+}
+
+/* --- Boutons ----------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ink);
+  font-size: var(--text-base);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+
+.btn-solid {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.btn-solid:hover {
+  background: var(--ink-soft);
+  box-shadow: 0 10px 24px -12px rgba(17, 17, 17, 0.5);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn-outline:hover {
+  background: var(--interactive-dim);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* ===============================================================
+   Hero
+   =============================================================== */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* Epingle : le hero reste en place, la feuille remonte dessus. */
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  min-height: calc(100svh - var(--space-8));
+  padding: clamp(var(--space-10), 10vh, 120px) 0 var(--space-8);
+}
+
+.hero-intro {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.hero-wave {
+  color: var(--accent);
+  font-size: 0.85em;
+  display: inline-block;
+  animation: wave-spin 9s linear infinite;
+}
+
+@keyframes wave-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* Ligne 1 : pixel et espacee, un clin d'oeil au terminal en dessous. */
+.hero-title-pixel {
+  display: inline-block;
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: var(--display-sm);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  padding-left: 0.2em;
+}
+
+.hero-title-line:first-child {
+  margin-bottom: var(--space-3);
+}
+
+.hero-title-solid,
+.hero-title-outline {
+  display: inline-block;
+  font-size: var(--display-xl);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Ligne 3 : evidee. Pas de text-stroke : il dessine les contours qui se
+   chevauchent a l'interieur des glyphes (Inter variable). Huit ombres
+   decalees d'un pixel et demi tracent la silhouette proprement.     */
+.hero-title-outline {
+  color: var(--surface-0);
+  text-shadow: 1.5px 0 var(--ink), -1.5px 0 var(--ink), 0 1.5px var(--ink), 0 -1.5px var(--ink),
+    1px 1px var(--ink), -1px -1px var(--ink), 1px -1px var(--ink), -1px 1px var(--ink);
+}
+
+.hero-title-line:last-child {
+  margin-top: -0.02em;
+}
+
+.hero-tagline {
+  max-width: 34rem;
+  margin-top: var(--space-8);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+/* Pied editorial : localisation, stack, liens. Trois colonnes calmes.
+   Detache du hero, il vit maintenant dans la feuille, avant le terminal. */
+.hero-foot {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  text-align: left;
+  font-size: var(--text-sm);
+}
+
+.hero-based {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+}
+
+.hero-availability {
+  color: var(--text-muted);
+}
+
+.hero-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(47, 143, 91, 0.16);
+  animation: status-pulse 2.6s var(--ease-out) infinite;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(47, 143, 91, 0.16);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(47, 143, 91, 0.05);
+  }
+}
+
+.hero-stack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hero-stack li {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-secondary);
+  padding: 4px var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+}
+
+.hero-links {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hero-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.hero-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.hero-link-arrow {
+  font-size: var(--text-xs);
+  transform: translate(0, 1px);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.hero-links a:hover .hero-link-arrow {
+  transform: translate(2px, -1px);
+}
+
+/* ===============================================================
+   Eventail de cartes
+   Les cartes se deploient depuis un pivot bas et central : chacune
+   recoit un angle et une elevation calcules a partir de son index.
+   =============================================================== */
+
+.fan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.fan-deck {
+  --fan-card-w: clamp(150px, 15vw, 210px);
+  --fan-card-h: calc(var(--fan-card-w) * 1.28);
+  --fan-spread: 9deg;
+  --fan-step: 0.52;
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: calc(var(--fan-card-h) + 110px);
+  display: flex;
+  justify-content: center;
+}
+
+.fan-slot {
+  /* Index centre sur zero : -2.5 .. 2.5 pour six cartes. */
+  --fan-c: calc(var(--fan-i) - (var(--fan-count) - 1) / 2);
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  width: var(--fan-card-w);
+  height: var(--fan-card-h);
+  margin-left: calc(var(--fan-card-w) / -2);
+  transform-origin: 50% 240%;
+  transform: translateX(calc(var(--fan-c) * var(--fan-card-w) * var(--fan-step)))
+    rotate(calc(var(--fan-c) * var(--fan-spread)));
+  transition: transform 360ms var(--ease-snap), z-index 0s;
+  z-index: calc(var(--fan-i) + 1);
+}
+
+.fan-slot:hover,
+.fan-slot:focus-within {
+  z-index: 20;
+  transform: translateX(calc(var(--fan-c) * var(--fan-card-w) * var(--fan-step))) translateY(-18px)
+    rotate(calc(var(--fan-c) * var(--fan-spread) * 0.5)) scale(1.04);
+}
+
+.fan-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-4);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 18px;
+  background: var(--fan-tone);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, var(--shadow-md);
+  transition: box-shadow 360ms var(--ease-snap);
+}
+
+.fan-slot:hover .fan-card,
+.fan-slot:focus-within .fan-card {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, var(--shadow-lg);
+}
+
+.fan-card[data-ink="light"] {
+  color: #f6f6f3;
+}
+
+.fan-card[data-ink="dark"] {
+  color: var(--ink);
+}
+
+.fan-card-index,
+.fan-card-cmd {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  opacity: 0.72;
+}
+
+.fan-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fan-card-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+.fan-card-helper {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  opacity: 0.8;
+}
+
+/* ===============================================================
+   Sites en production
+   Cartes navigateur : barre de chrome, capture live, meta.
+   =============================================================== */
+
+.sites {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.sites-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(var(--space-5), 3vw, var(--space-8));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-slot {
+  min-width: 0;
+}
+
+.site-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.site-card:hover {
+  text-decoration: none;
+}
+
+/* Barre de navigateur : trois pastilles + l'adresse dans une pilule. */
+.site-chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.site-dots {
+  display: inline-flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.site-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-stronger);
+}
+
+.site-url {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+}
+
+/* Zone capture : ratio fixe, l'image remplit et defile au survol. */
+.site-shot {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--site-tone, var(--surface-2));
+}
+
+.site-shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* Repli : visible sous l'image ; si la capture echoue (onError), le
+   composant retire l'image et ce bloc colore prend le relais. */
+.site-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  color: rgba(255, 255, 255, 0.9);
+  background: var(--site-tone, var(--ink));
+}
+
+.site-open {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 1;
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #ffffff;
+  font-size: var(--text-2xs);
+  font-weight: 500;
+}
+
+.site-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.site-name {
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.site-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.site-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ===============================================================
+   Zigzag : la dentelure de la maquette, en gradients purs.
+   =============================================================== */
+
+.zigzag {
+  height: 14px;
+  background: linear-gradient(135deg, var(--ink) 25%, transparent 25%) 0 0 / 14px 14px,
+    linear-gradient(225deg, var(--ink) 25%, transparent 25%) 0 0 / 14px 14px;
+  background-repeat: repeat-x;
+  opacity: 0.9;
+}
+
+/* ===============================================================
+   Scene du terminal
+   =============================================================== */
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  /* Place pour la pilule de nav collante et sa ligne de statut. */
+  scroll-margin-top: 104px;
+}
+
+/* La bande du haut reserve la place de la note manuscrite. */
+.stage-frame {
+  position: relative;
+  padding-top: 64px;
+}
+
+/* Bezel noir : la maquette encadre son ecran d'un bord epais et arrondi. */
+.device {
+  padding: 10px;
+  border-radius: 28px;
+  background: var(--ink);
+  box-shadow: var(--shadow-lg);
+  height: clamp(480px, 74vh, var(--terminal-max-height));
+}
+
+.device .terminal {
+  height: 100%;
+  max-height: none;
+  border-radius: 20px;
+  border-color: rgba(148, 173, 210, 0.16);
+}
+
+/* Note manuscrite + fleche, posee au-dessus du bezel. */
+.stage-note {
+  position: absolute;
+  right: 4%;
+  top: 4px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-family: var(--font-hand);
+  font-size: 1.45rem;
+  line-height: 1.1;
+  color: var(--ink);
+  transform: rotate(-4deg);
+  pointer-events: none;
+}
+
+.stage-note code {
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  padding: 1px 6px;
+  border: 1px solid var(--border-stronger);
+  border-radius: 6px;
+  background: var(--surface-1);
+  vertical-align: middle;
+}
+
+.stage-note-arrow {
+  width: 56px;
+  height: 42px;
+  margin-top: 14px;
+}
+
+/* ===============================================================
+   Pied de page
+   =============================================================== */
+
+.footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.footer-tagline {
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+
+.footer-copy {
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+}
+
+.footer-links a:hover {
+  color: var(--text-primary);
+}
+
+/* ===============================================================
+   Responsive
+   =============================================================== */
+
+@media (max-width: 1080px) {
+  .fan-deck {
+    --fan-spread: 9deg;
+  }
+}
+
+@media (max-width: 880px) {
+  .app {
+    padding: var(--space-4) var(--space-4) var(--space-8);
+  }
+
+  .app-shell {
+    gap: var(--space-8);
+  }
+
+  /* Le hero reste epingle, mais on lui laisse une hauteur plus souple
+     et la feuille garde ses coins arrondis. */
+  .hero {
+    min-height: calc(100svh - var(--space-6));
+    padding-top: clamp(var(--space-8), 8vh, 80px);
+  }
+
+  .sheet {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    border-radius: 22px 22px 0 0;
+  }
+
+  .hero-title-solid,
+  .hero-title-outline {
+    white-space: normal;
+  }
+
+  .hero-foot {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-4);
+  }
+
+  .hero-links {
+    justify-content: center;
+  }
+
+  /* Une colonne : les captures gardent leur ratio. */
+  .sites-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* L'eventail devient une rangee defilante : six cartes pivotees ne
+     tiennent pas dans 400px de large. */
+  .fan-deck {
+    --fan-card-w: 168px;
+    height: auto;
+    display: flex;
+    justify-content: flex-start;
+    gap: var(--space-3);
+    overflow-x: auto;
+    padding: var(--space-2) var(--space-1) var(--space-4);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .fan-deck::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fan-slot {
+    position: static;
+    flex: 0 0 var(--fan-card-w);
+    margin-left: 0;
+    transform: none;
+    scroll-snap-align: start;
+  }
+
+  .fan-slot:hover,
+  .fan-slot:focus-within {
+    transform: translateY(-4px);
+  }
+
+  .device {
+    height: min(78vh, 640px);
+    padding: 7px;
+    border-radius: 22px;
+  }
+
+  .device .terminal {
+    border-radius: 16px;
+  }
+
+  .stage-note {
+    right: 2%;
+    top: 8px;
+    font-size: 1.25rem;
+  }
+
+  .footer {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-3);
+  }
+
+  .footer-links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .app {
+    padding: var(--space-3) var(--space-3) var(--space-6);
+  }
+
+  .hero-title-pixel {
+    letter-spacing: 0.12em;
+  }
+
+  .hero-stack li {
+    font-size: 10px;
+  }
+
+  .btn {
+    flex: 1 1 100%;
+  }
+}
