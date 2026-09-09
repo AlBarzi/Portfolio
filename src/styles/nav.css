@@ -29,9 +29,9 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: "sigil tabs actions";
   align-items: center;
-  column-gap: var(--space-3);
+  column-gap: var(--space-2);
   row-gap: var(--space-2);
-  width: min(100%, 1180px);
+  width: min(100%, 1280px);
   padding: 6px 6px 6px var(--space-3);
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
@@ -81,7 +81,7 @@
   grid-area: tabs;
   position: relative;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   align-content: center;
   justify-content: center;
@@ -97,7 +97,7 @@
   border: 1px solid transparent;
   background: transparent;
   border-radius: var(--radius-pill);
-  padding: var(--space-2) 10px;
+  padding: var(--space-2) 8px;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -213,7 +213,7 @@
   gap: var(--space-2);
   height: 36px;
   min-width: 0;
-  padding: 0 var(--space-2) 0 var(--space-3);
+  padding: 0 var(--space-2) 0 10px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-pill);
   background: var(--surface-1);
@@ -353,8 +353,9 @@
    Adaptation de la barre (largeur du conteneur, pas du viewport)
    =============================================================== */
 
-/* Palier 1 : le libelle long de la palette ne rentre plus. */
-@container navbar (max-width: 1100px) {
+/* Palier 1 : sous les grands ecrans, la palette se reduit a son icone
+   et son raccourci pour laisser toute la place aux onglets. */
+@container navbar (max-width: 1280px) {
   .nav-command-bar-label {
     display: none;
   }
@@ -364,9 +365,15 @@
   }
 }
 
-/* Palier 2 : les onglets prennent leur propre rangee. La pilule devient
-   une carte arrondie : une pilule a deux etages n'en est plus une. */
-@container navbar (max-width: 760px) {
+@container navbar (max-width: 1120px) {
+  .nav-command-bar-label-short {
+    display: none;
+  }
+}
+
+/* Palier 2 : les onglets prennent leur propre rangee, sur une seule
+   ligne centree. Tous les liens restent alignes ensemble. */
+@container navbar (max-width: 1040px) {
   .nav-bar {
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
@@ -381,11 +388,28 @@
   }
 
   .nav-tabs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
-    gap: 4px;
     padding-top: var(--space-2);
     border-top: 1px solid var(--border);
+  }
+
+  /* La palette retrouve son libelle court : il y a de la place sur la
+     rangee des actions une fois les onglets descendus. */
+  .nav-command-bar-label-short {
+    display: block;
+  }
+
+  .nav-status-tips {
+    display: none;
+  }
+}
+
+/* Palier 3 : trop etroit pour une rangee unique. Les onglets passent en
+   grille (trois colonnes) plutot que de deborder. */
+@container navbar (max-width: 620px) {
+  .nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
   }
 
   .nav-tab {
@@ -394,16 +418,6 @@
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .nav-status-tips {
-    display: none;
-  }
-}
-
-@container navbar (max-width: 520px) {
-  .nav-tabs {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .nav-command-bar .nav-kbd,
@@ -417,10 +431,6 @@
 
   .nav-cta {
     padding: 0 var(--space-3);
-    font-size: var(--text-xs);
-  }
-
-  .nav-tab {
     font-size: var(--text-xs);
   }
 }
