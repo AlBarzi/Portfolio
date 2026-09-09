@@ -864,6 +864,7 @@ const useTerminal = () => {
           [
             cmdButton("about"),
             cmdButton("projects"),
+            cmdButton("websites"),
             cmdButton("docs"),
             cmdButton("games"),
             cmdButton("help"),

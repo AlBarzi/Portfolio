@@ -290,6 +290,65 @@
   transform: translateY(1px);
 }
 
+/* --- Burger (telephone) -------------------------------------------
+   Cache par defaut ; le CSS mobile le revele et transforme les onglets
+   en panneau deroulant.                                                */
+
+.nav-burger {
+  display: none;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  cursor: pointer;
+}
+
+.nav-burger-box {
+  position: relative;
+  width: 18px;
+  height: 12px;
+}
+
+.nav-burger-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  transition: transform 240ms var(--ease-snap), opacity 140ms var(--ease-out);
+}
+
+.nav-burger-line:nth-child(1) {
+  top: 0;
+}
+.nav-burger-line:nth-child(2) {
+  top: 5px;
+}
+.nav-burger-line:nth-child(3) {
+  top: 10px;
+}
+
+/* Croix a l'ouverture. */
+.nav[data-menu-open] .nav-burger-line:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+.nav[data-menu-open] .nav-burger-line:nth-child(2) {
+  opacity: 0;
+}
+.nav[data-menu-open] .nav-burger-line:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+/* Appel a l'action, seulement dans le menu deroulant. */
+.nav-menu-cta {
+  display: none;
+}
+
 /* --- Ligne de statut ----------------------------------------------
    Petite pilule sous la grande. Elle nomme la commande que le bouton
    survole va lancer, et garde un fond : la nav est collante, le texte
@@ -405,33 +464,95 @@
 
 /* Palier 3 : trop etroit pour une rangee unique. Les onglets passent en
    grille (trois colonnes) plutot que de deborder. */
-@container navbar (max-width: 620px) {
+/* Palier 3 : telephone. La pilule redevient une seule rangee, les onglets
+   passent dans un menu deroulant ouvert par le burger. */
+@container navbar (max-width: 720px) {
+  .nav-bar {
+    position: relative;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "sigil actions";
+    border-radius: var(--radius-pill);
+    padding: 6px 6px 6px var(--space-3);
+  }
+
+  .nav-actions {
+    justify-content: flex-end;
+  }
+
+  /* Dans la barre reduite : burger seul, le reste passe dans le menu. */
+  .nav-burger {
+    display: inline-flex;
+  }
+
+  .nav-command-bar,
+  .nav-cta {
+    display: none;
+  }
+
+  /* La ligne de statut (indices de survol) n'a pas de sens au toucher. */
+  .nav-status {
+    display: none;
+  }
+
+  /* Onglets : panneau deroulant sous la pilule, ferme par defaut. */
   .nav-tabs {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: 0;
+    right: 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 4px;
+    padding: var(--space-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    transform-origin: top center;
+    pointer-events: none;
+    transition: opacity 180ms var(--ease-out), transform 220ms var(--ease-snap);
+    z-index: 5;
+  }
+
+  .nav[data-menu-open] .nav-tabs {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
   }
 
   .nav-tab {
     min-width: 0;
-    padding: var(--space-2);
+    padding: var(--space-3);
     text-align: center;
+    border-radius: var(--radius);
+    background: var(--surface-2);
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .nav-command-bar .nav-kbd,
-  .nav-command-bar-label-short {
+  .nav-tab[data-active] {
+    background: var(--ink);
+  }
+
+  /* Pastilles inutiles dans un menu vertical. */
+  .nav-indicator,
+  .nav-hover {
     display: none;
   }
 
-  .nav-command-bar {
-    padding: 0 var(--space-3);
-  }
-
-  .nav-cta {
-    padding: 0 var(--space-3);
-    font-size: var(--text-xs);
+  .nav-menu-cta {
+    display: block;
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    padding: var(--space-3);
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: #ffffff;
+    font-weight: 500;
+    cursor: pointer;
   }
 }
 

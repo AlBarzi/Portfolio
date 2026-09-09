@@ -118,14 +118,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   /* Epingle : le hero reste en place, la feuille remonte dessus. */
   position: sticky;
   top: 0;
   z-index: 0;
   min-height: calc(100svh - var(--space-8));
-  padding: clamp(var(--space-10), 10vh, 120px) 0 var(--space-8);
+  /* Contenu ancre pres du haut : pas de vide entre la nav et l'intro. */
+  padding: clamp(var(--space-4), 3vh, var(--space-8)) 0 var(--space-8);
 }
 
 .hero-intro {

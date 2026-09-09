@@ -74,6 +74,8 @@ const NavBar = () => {
   // Commande survolee ou focalisee : c'est elle qu'annonce la ligne de statut.
   const [hintId, setHintId] = useState<string | null>(null);
   const [rovingIndex, setRovingIndex] = useState(0);
+  // Menu deroulant sur telephone (burger).
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const startViewTransition = useViewTransition();
@@ -111,10 +113,21 @@ const NavBar = () => {
   const run = useCallback(
     (id: string) => {
       void runCommand(id, { simulateTyping: true });
+      setMenuOpen(false);
       revealTerminal();
     },
     [runCommand]
   );
+
+  // Ferme le menu telephone a l'echappement.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   /**
    * Motif "toolbar" de WAI-ARIA : un seul arret de tabulation pour toute
@@ -159,7 +172,12 @@ const NavBar = () => {
     : undefined;
 
   return (
-    <nav className="nav" aria-label={copy.aria[lang]} data-busy={isTyping || undefined}>
+    <nav
+      className="nav"
+      aria-label={copy.aria[lang]}
+      data-busy={isTyping || undefined}
+      data-menu-open={menuOpen || undefined}
+    >
       <div className="nav-bar">
         {/* Marque : le loup dans une pastille sombre (couleurs d'origine). */}
         <button
@@ -174,6 +192,7 @@ const NavBar = () => {
 
         <div
           className="nav-tabs"
+          id="nav-menu"
           ref={containerRef}
           role="toolbar"
           aria-label={copy.toolbar[lang]}
@@ -221,6 +240,16 @@ const NavBar = () => {
               {command.label[lang]}
             </button>
           ))}
+
+          {/* Visible seulement dans le menu telephone : l'appel a l'action
+              n'a pas sa place dans la barre reduite. */}
+          <button
+            type="button"
+            className="nav-menu-cta"
+            onClick={() => run("contact")}
+          >
+            {copy.cta[lang]}
+          </button>
         </div>
 
         <div className="nav-actions">
@@ -267,6 +296,22 @@ const NavBar = () => {
             onClick={() => run("contact")}
           >
             {copy.cta[lang]}
+          </button>
+
+          {/* Burger : n'apparait que sur telephone (CSS). */}
+          <button
+            type="button"
+            className="nav-burger"
+            aria-label={lang === "en" ? "Menu" : "Menu"}
+            aria-expanded={menuOpen}
+            aria-controls="nav-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="nav-burger-box" aria-hidden="true">
+              <span className="nav-burger-line" />
+              <span className="nav-burger-line" />
+              <span className="nav-burger-line" />
+            </span>
           </button>
         </div>
       </div>
