@@ -480,25 +480,6 @@
   transform: translateY(-1px);
 }
 
-/* Point rouge du monogramme : respire. */
-@keyframes dot-breathe {
-  0%,
-  100% {
-    transform: translateY(-1px) scale(1);
-  }
-  50% {
-    transform: translateY(-1px) scale(1.35);
-  }
-}
-
-.nav-sigil-caret {
-  animation: dot-breathe 3.2s var(--ease-out) infinite;
-}
-
-.nav-sigil:hover .nav-sigil-caret {
-  animation-duration: 0.8s;
-}
-
 /* Statut : le nouveau texte glisse depuis le bas. */
 @keyframes status-swap {
   from {

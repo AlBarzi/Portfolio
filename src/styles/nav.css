@@ -58,25 +58,21 @@
   cursor: pointer;
 }
 
-/* Loup detoure : la marque, a gauche du nom. */
+/* Loup detoure dans une pastille sombre : garde ses couleurs d'origine
+   tout en restant visible sur la pilule blanche. */
 .nav-logo {
-  height: 24px;
-  width: auto;
+  height: 30px;
+  width: 30px;
+  object-fit: contain;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--ink);
   display: block;
   transition: transform 240ms var(--ease-back);
 }
 
 .nav-sigil:hover .nav-logo {
-  transform: rotate(-6deg) scale(1.08);
-}
-
-/* Le point rouge : seul accent de la pilule, aligne sur la ligne de base. */
-.nav-sigil-caret {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  transform: translateY(-1px);
+  transform: rotate(-6deg) scale(1.06);
 }
 
 /* --- Onglets ------------------------------------------------------ */

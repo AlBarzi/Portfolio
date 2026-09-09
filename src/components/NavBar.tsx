@@ -161,16 +161,15 @@ const NavBar = () => {
   return (
     <nav className="nav" aria-label={copy.aria[lang]} data-busy={isTyping || undefined}>
       <div className="nav-bar">
-        {/* Marque : le loup + le point rouge, seul accent de la pilule. */}
+        {/* Marque : le loup dans une pastille sombre (couleurs d'origine). */}
         <button
           type="button"
           className="nav-sigil"
           onClick={() => run("about")}
           aria-label={lang === "en" ? "Home: about me" : "Accueil : a propos"}
         >
-          <img className="nav-logo" src="/assets/brand/logo-mark.png" alt="" aria-hidden="true" />
+          <img className="nav-logo" src="/assets/brand/logo.png" alt="" aria-hidden="true" />
           <span className="nav-sigil-glyph">Ramzy</span>
-          <span className="nav-sigil-caret" aria-hidden="true" />
         </button>
 
         <div
