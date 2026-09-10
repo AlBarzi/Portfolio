@@ -1,0 +1,29 @@
+# Fly.io : conteneur unique WorldCup (noVNC). Deploie depuis la RACINE du repo :
+#   fly launch --no-deploy --copy-config --config deploy/worldcup-novnc/fly.toml
+#   fly secrets set POSTGRES_PASSWORD=... WORLDCUP_VNC_PASSWORD=...
+#   fly deploy --config deploy/worldcup-novnc/fly.toml --dockerfile deploy/worldcup-novnc/Dockerfile.fly
+#
+# Choisis un nom d'app unique et ta region (yul = Montreal).
+app = "worldcup-ramzy"
+primary_region = "yul"
+
+[build]
+  dockerfile = "deploy/worldcup-novnc/Dockerfile.fly"
+
+[env]
+  POSTGRES_USER = "worldcup"
+  POSTGRES_DB = "postgres"
+  WORLDCUP_DB_NAME = "coupe_du_monde"
+  PORTFOLIO_URL = "https://ramzyammouri.com/"
+  # POSTGRES_PASSWORD et WORLDCUP_VNC_PASSWORD : via `fly secrets set`, jamais ici.
+
+[http_service]
+  internal_port = 6080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"

@@ -81,12 +81,21 @@ fi
 
 openbox > /tmp/openbox.log 2>&1 &
 
+# Mot de passe VNC optionnel : sans lui l'ecran est ouvert (dev local),
+# avec lui l'acces est protege (obligatoire si expose publiquement).
+if [ -n "${WORLDCUP_VNC_PASSWORD:-}" ]; then
+  x11vnc -storepasswd "$WORLDCUP_VNC_PASSWORD" /tmp/vncpass >/dev/null 2>&1
+  vnc_auth=(-rfbauth /tmp/vncpass)
+else
+  vnc_auth=(-nopw)
+fi
+
 x11vnc \
   -display "$DISPLAY" \
   -rfbport "$VNC_PORT" \
   -forever \
   -shared \
-  -nopw \
+  "${vnc_auth[@]}" \
   -xkb > /tmp/x11vnc.log 2>&1 &
 
 websockify --web=/usr/share/novnc/ "$NOVNC_PORT" "127.0.0.1:${VNC_PORT}" > /tmp/websockify.log 2>&1 &

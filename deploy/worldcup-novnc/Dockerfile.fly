@@ -1,0 +1,41 @@
+# Conteneur tout-en-un (Postgres + app Tkinter + noVNC) pour un hebergement
+# mono-service type Fly.io / Render. Contexte de build = racine du repo.
+FROM python:3.12-slim
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    DISPLAY=:1
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl \
+        gcc \
+        libpq-dev \
+        novnc \
+        openbox \
+        postgresql \
+        postgresql-contrib \
+        tk \
+        websockify \
+        x11vnc \
+        xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+COPY ["Projects/WorldCup/Projet_Equipe 2", "/workspace/Projects/WorldCup/Projet_Equipe 2"]
+COPY ["deploy/worldcup-novnc/scripts", "/opt/worldcup/scripts"]
+
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir Pillow psycopg2-binary \
+    && chmod +x /opt/worldcup/scripts/entrypoint.sh \
+                /opt/worldcup/scripts/entrypoint.fly.sh \
+                /opt/worldcup/scripts/healthcheck.sh
+
+ENV WORLDCUP_PROJECT_DIR="/workspace/Projects/WorldCup/Projet_Equipe 2" \
+    NOVNC_PORT=6080 \
+    VNC_PORT=5900
+
+EXPOSE 6080
+
+ENTRYPOINT ["/opt/worldcup/scripts/entrypoint.fly.sh"]
