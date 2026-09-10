@@ -69,7 +69,9 @@ const Hero = () => {
           data-magnetic
           onClick={() => run("contact")}
         >
-          <span className="btn-label">{lang === "en" ? "Say hello" : "Dire bonjour"}</span>
+          <span className="btn-label">
+            {lang === "en" ? "Say hello" : `Dire ${greeting.toLowerCase()}`}
+          </span>
         </button>
       </div>
     </header>
