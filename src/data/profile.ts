@@ -48,7 +48,7 @@ export const profile = {
    *  l'heure dans le hero). */
   introRest: {
     en: "my name is Ramzy and I am a",
-    fr: "je m'appelle Ramzy et je suis",
+    fr: "je me nomme Ramzy et je suis",
   },
 
   /** Resume du profil, repris du CV. */
