@@ -44,9 +44,11 @@ export const profile = {
     en: "Hi, my name is Ramzy and I am a",
     fr: "Salut, je m'appelle Ramzy et je suis",
   },
-  tagline: {
-    en: "Designing normalised schemas and the systems that query them, so data feels a little more honest.",
-    fr: "Je concois des schemas normalises et les systemes qui les interrogent, pour des donnees un peu plus honnetes.",
+  /** Partie de l'intro apres la salutation (celle-ci est calculee selon
+   *  l'heure dans le hero). */
+  introRest: {
+    en: "my name is Ramzy and I am a",
+    fr: "je m'appelle Ramzy et je suis",
   },
 
   /** Resume du profil, repris du CV. */

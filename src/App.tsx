@@ -21,7 +21,6 @@ const footerLinks = links.filter((link) => link.id !== "phone");
 const copy = {
   terminalKicker: { en: "The terminal", fr: "Le terminal" },
   note: { en: "psst, try typing", fr: "psst, essaie de taper" },
-  footerTagline: { en: "Data, made honest.", fr: "Des donnees honnetes." },
 } as const;
 
 const Page = () => {
@@ -86,7 +85,6 @@ const Page = () => {
       </main>
 
       <footer className="footer" data-reveal>
-        <p className="footer-tagline">{copy.footerTagline[lang]}</p>
         <p className="footer-copy">
           &copy; {new Date().getFullYear()} {profile.name}. {profile.location}.
         </p>

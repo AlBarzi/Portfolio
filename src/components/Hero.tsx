@@ -6,14 +6,24 @@ import SplitText from "./SplitText";
 
 const stagger = (step: number) => ({ "--d": step } as CSSProperties);
 
+/** Salutation selon l'heure locale du visiteur. */
+const greetingFor = (lang: "en" | "fr") => {
+  const hour = new Date().getHours();
+  if (lang === "fr") return hour >= 18 || hour < 5 ? "Bonsoir" : "Bonjour";
+  if (hour >= 5 && hour < 12) return "Good morning";
+  if (hour >= 12 && hour < 18) return "Good afternoon";
+  return "Good evening";
+};
+
 /**
  * Hero d'affiche : intro, titre en trois lignes (pixel, plein, evide),
- * accroche, deux actions. Le pied editorial vit desormais en bas de
- * page (voir HeroFoot) : le hero reste epure et pleine hauteur.
+ * deux actions. Le pied editorial vit desormais en bas de page
+ * (voir HeroFoot) : le hero reste epure et pleine hauteur.
  */
 const Hero = () => {
   const { lang, runCommand } = useTerminalContext();
   const headline = profile.headline[lang];
+  const greeting = greetingFor(lang);
 
   const run = (id: string) => {
     void runCommand(id, { simulateTyping: true });
@@ -26,7 +36,7 @@ const Hero = () => {
         <span className="hero-wave" aria-hidden="true">
           &#10035;
         </span>
-        {profile.intro[lang]}
+        {greeting}, {profile.introRest[lang]}
       </p>
 
       {/* key={lang} : le titre rejoue son entree quand la langue change. */}
@@ -46,11 +56,7 @@ const Hero = () => {
         </span>
       </h1>
 
-      <p className="hero-tagline" style={stagger(1)}>
-        {profile.tagline[lang]}
-      </p>
-
-      <div className="hero-actions" style={stagger(2)}>
+      <div className="hero-actions" style={stagger(1)}>
         <button type="button" className="btn btn-solid" data-magnetic onClick={() => run("cv")}>
           <span className="btn-label">{lang === "en" ? "Open resume" : "Ouvrir le CV"}</span>
           <span className="btn-arrow" aria-hidden="true">
