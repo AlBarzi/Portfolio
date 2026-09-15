@@ -80,8 +80,8 @@ export const links: ProfileLink[] = [
   {
     id: "linkedin",
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/", // TODO: coller l'URL complete de ton profil
-    handle: "in/ramzy-ammouri",
+    href: "https://www.linkedin.com/in/ramzy-youcef-ammouri-8016b02a5",
+    handle: "in/ramzy-youcef-ammouri",
   },
 ];
 
@@ -263,14 +263,9 @@ export const worldCupDoc = {
   },
   course: "IFT 2935 — Bases de donnees, Universite de Montreal",
   date: { en: "April 2025", fr: "Avril 2025" },
-  pages: 15,
-  /** Projet d'equipe : quatre auteurs, dont moi. */
-  authors: [
-    "Ramzy Youcef Ammouri",
-    "Emery Adjile",
-    "Gerry Dienakwiza Makinga",
-    "Kevin Guo",
-  ],
+  pages: 16,
+  /** Projet realise seul, de A a Z. */
+  authors: ["Ramzy Youcef Ammouri"],
   href: "/docs/worldcup/rapport-ift2935.pdf",
   sections: [
     {

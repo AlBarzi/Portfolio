@@ -621,7 +621,7 @@ const useTerminal = () => {
           createLine(worldCupDoc.title[active], { tone: "accent", typed: true }),
           createLine(`${worldCupDoc.course} — ${worldCupDoc.date[active]}`, { tone: "muted" }),
           createLine(
-            (active === "en" ? "Team project — " : "Projet d'equipe — ") +
+            (active === "en" ? "Solo project — " : "Projet individuel — ") +
               worldCupDoc.authors.join(", "),
             { tone: "muted" }
           ),
