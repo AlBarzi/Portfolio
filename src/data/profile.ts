@@ -139,6 +139,15 @@ export interface Client {
   tone: string;
 }
 
+/**
+ * Studio avec lequel les sites clients ont ete realises. Affiche avec la
+ * vitrine : quelqu'un qui contacte un client doit savoir par qui passer.
+ */
+export const studio = {
+  name: "BYB Studio",
+  url: "https://byb.studio/",
+} as const;
+
 /** Sites livres en production. Captures locales dans public/assets/sites. */
 export const clients: Client[] = [
   {
@@ -356,8 +365,8 @@ export const demos: Demo[] = [
     name: "Minesweeper",
     stack: ["JavaScript"],
     summary: {
-      en: "Recursive flood-fill reveal with first-click safety.",
-      fr: "Revelation recursive par flood-fill, premier clic toujours sur.",
+      en: "Breadth-first flood fill, safe first click, mouse, touch and keyboard.",
+      fr: "Flood-fill en largeur, premier clic toujours sur, souris, tactile et clavier.",
     },
   },
 ];
@@ -390,8 +399,8 @@ export const education: TimelineEntry[] = [
   {
     period: "2021",
     title: {
-      en: "Preparatory year, natural and formal sciences",
-      fr: "Annee preparatoire en sciences naturelles et formelles",
+      en: "Preparatory year, natural and formal sciences (computer science)",
+      fr: "Annee preparatoire en sciences naturelles et formelles (informatique)",
     },
     org: "Universite de Montreal",
     place: "Montreal, QC",

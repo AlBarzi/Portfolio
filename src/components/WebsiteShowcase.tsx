@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { clients } from "../data/profile";
+import { clients, studio } from "../data/profile";
 import { useTerminalContext } from "../state/TerminalContext";
 
 const copy = {
   kicker: { en: "Live websites", fr: "Sites en ligne" },
   heading: { en: "Websites in production", fr: "Sites en production" },
   visit: { en: "Visit site", fr: "Voir le site" },
+  credit: { en: "Built in collaboration with", fr: "Realises en collaboration avec" },
 } as const;
 
 const WebsiteCard = ({
@@ -81,6 +82,13 @@ const WebsiteShowcase = () => {
           <WebsiteCard key={client.id} client={client} index={index} lang={lang} />
         ))}
       </ul>
+
+      <p className="sites-credit">
+        {copy.credit[lang]}{" "}
+        <a href={studio.url} target="_blank" rel="noopener noreferrer">
+          {studio.name} &#8599;
+        </a>
+      </p>
     </section>
   );
 };

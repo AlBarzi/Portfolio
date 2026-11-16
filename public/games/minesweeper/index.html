@@ -2,57 +2,137 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Minesweeper retro jouable dans le navigateur">
-  <title>Minesweeper - Ammouri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f3f1">
+  <meta name="description" content="Démineur jouable dans le navigateur : premier clic toujours sûr, révélation en cascade, souris, tactile et clavier. Par Ramzy Youcef Ammouri.">
+  <title>Démineur — Ramzy Youcef Ammouri</title>
+
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Silkscreen:wght@700&display=swap">
   <link rel="stylesheet" href="minesweeper.css">
 </head>
 <body>
-  <header class="page-header">
-    <a class="back-link" href="../../index.html">&lt;- Back to terminal</a>
-    <div>
-      <h1>Minesweeper</h1>
-      <p class="subtitle">Classic retro board</p>
+  <header class="top">
+    <a class="back" href="../../">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 3.5 5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="back">Retour au portfolio</span>
+    </a>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
   </header>
 
-  <main class="ms-wrapper">
-    <section class="ms-shell" aria-label="Minesweeper game">
+  <main class="layout">
+    <section class="intro">
+      <p class="kicker"><span class="kicker-dot" aria-hidden="true"></span><span data-i18n="kicker">Jeu 06 · JavaScript sans dépendance</span></p>
+      <h1 data-i18n="title">Démineur</h1>
+      <p class="lede" data-i18n="lede">Le classique, refait à la main : premier clic toujours sûr, cascade animée, et des commandes pensées pour la souris, le tactile et le clavier.</p>
+    </section>
+
+    <section class="game" data-i18n-label="gameLabel" aria-label="Jeu du démineur">
       <noscript>
-        <p>Le jeu a besoin de JavaScript pour s'afficher.</p>
+        <p class="noscript">Le jeu a besoin de JavaScript pour s'afficher. / This game needs JavaScript.</p>
       </noscript>
-      <div class="ms-top">
-        <div class="ms-counter" id="mine-counter">000</div>
-        <button class="ms-face" id="face" type="button" aria-label="New game"></button>
-        <div class="ms-counter" id="time-counter">000</div>
+
+      <div class="hud">
+        <div class="readout" data-i18n-title="minesLeft" title="Mines restantes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3.5v17M4.5 20.5h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 4.2 19 8.1 9 12z" fill="#e0452a"/></svg>
+          <span class="sr-only" data-i18n="minesLeft">Mines restantes</span>
+          <output id="mines-left">010</output>
+        </div>
+
+        <button class="face" id="face" type="button" data-state="idle" data-i18n-label="newGame" aria-label="Nouvelle partie" data-i18n-title="newGameHint" title="Nouvelle partie (R)">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <g class="f f-idle">
+              <circle cx="11.5" cy="13.4" r="1.8"/><circle cx="20.5" cy="13.4" r="1.8"/>
+              <path d="M10.4 19.4c1.6 2.3 3.5 3.4 5.6 3.4s4-1.1 5.6-3.4" fill="none" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g class="f f-tense">
+              <circle cx="11.5" cy="12.8" r="2"/><circle cx="20.5" cy="12.8" r="2"/>
+              <circle cx="16" cy="21.4" r="2.6" fill="none" stroke-width="2"/>
+            </g>
+            <g class="f f-won">
+              <path d="M6.5 11.6h19" fill="none" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8.2 11.6h6.4v2.2a3.2 3.2 0 0 1-6.4 0zM17.4 11.6h6.4v2.2a3.2 3.2 0 0 1-6.4 0z"/>
+              <path d="M10 19.6c1.7 2.4 3.7 3.6 6 3.6s4.3-1.2 6-3.6" fill="none" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g class="f f-lost">
+              <path d="m9.6 11.4 3.8 3.8m0-3.8-3.8 3.8M18.6 11.4l3.8 3.8m0-3.8-3.8 3.8" fill="none" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10.4 23c1.6-2.3 3.5-3.4 5.6-3.4s4 1.1 5.6 3.4" fill="none" stroke-width="2" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </button>
+
+        <div class="readout readout-time" data-i18n-title="time" title="Temps">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9v4.2l2.6 1.6M9.5 3h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="sr-only" data-i18n="time">Temps</span>
+          <output id="time">000</output>
+        </div>
       </div>
 
-      <div class="ms-board" id="board" role="grid" aria-label="Minesweeper board"></div>
+      <div class="progress" aria-hidden="true"><span id="progress"></span></div>
 
-      <div class="ms-bottom">
-        <label class="ms-level">
-          <span>Level</span>
-          <select id="level">
-            <option value="easy">Easy 9x9</option>
-            <option value="medium">Medium 16x16</option>
-            <option value="hard">Hard 16x30</option>
-          </select>
-        </label>
-        <p class="ms-status" id="status">Left click to reveal. Right click to flag.</p>
+      <div class="board-wrap" id="board-wrap">
+        <div class="board" id="board" role="grid" data-i18n-label="boardLabel" aria-label="Plateau du démineur"></div>
+      </div>
+
+      <div class="statusbar" id="statusbar" data-kind="ready">
+        <span class="status-chip" id="status-chip" aria-hidden="true"></span>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <button class="replay" id="replay" type="button" hidden data-i18n="replay">Rejouer</button>
+      </div>
+
+      <div class="controls">
+        <div class="segmented" id="levels" role="group" data-i18n-label="level" aria-label="Niveau">
+          <button type="button" data-level="easy" aria-pressed="true"><span data-i18n="easy">Débutant</span><small>9×9 · 10</small></button>
+          <button type="button" data-level="medium" aria-pressed="false"><span data-i18n="medium">Intermédiaire</span><small>16×16 · 40</small></button>
+          <button type="button" data-level="hard" aria-pressed="false"><span data-i18n="hard">Expert</span><small>30×16 · 99</small></button>
+        </div>
+
+        <button class="toggle" id="flag-mode" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3.5v17M4.5 20.5h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 4.2 19 8.1 9 12z" fill="currentColor"/></svg>
+          <span data-i18n="flagMode">Mode drapeau</span>
+        </button>
+
+        <p class="best" id="best"></p>
       </div>
     </section>
 
-    <section class="ms-help">
-      <h2>Controls</h2>
-      <ul>
-        <li>Left click: reveal a tile</li>
-        <li>Right click: place or remove a flag</li>
-        <li>Double click a number to reveal its neighbors</li>
-      </ul>
+    <section class="notes">
+      <article class="note">
+        <h2><span class="note-index">01</span><span data-i18n="howTitle">Comment jouer</span></h2>
+        <dl>
+          <dt data-i18n="howMouse">Souris</dt>
+          <dd data-i18n-html="howMouseText"></dd>
+          <dt data-i18n="howTouch">Tactile</dt>
+          <dd data-i18n-html="howTouchText"></dd>
+          <dt data-i18n="howKeys">Clavier</dt>
+          <dd data-i18n-html="howKeysText"></dd>
+        </dl>
+      </article>
+
+      <article class="note">
+        <h2><span class="note-index">02</span><span data-i18n="hoodTitle">Sous le capot</span></h2>
+        <ul>
+          <li data-i18n-html="hood1"></li>
+          <li data-i18n-html="hood2"></li>
+          <li data-i18n-html="hood3"></li>
+          <li data-i18n-html="hood4"></li>
+        </ul>
+      </article>
     </section>
   </main>
 
-  <script src="minesweeper.js"></script>
+  <footer class="foot">
+    <a href="../../">Ramzy Youcef Ammouri</a>
+    <span aria-hidden="true">·</span>
+    <span data-i18n="footer">Portfolio interactif</span>
+  </footer>
+
+  <script src="minesweeper-core.js" defer></script>
+  <script src="minesweeper.js" defer></script>
 </body>
 </html>
-

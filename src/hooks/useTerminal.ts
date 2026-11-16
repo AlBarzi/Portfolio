@@ -14,6 +14,7 @@ import {
   strengths,
   worldCupDoc,
   clients,
+  studio,
 } from "../data/profile";
 import {
   commonPrefix,
@@ -71,7 +72,11 @@ const promptMarkup =
   `<span class="prompt-short">${shortPromptLabel}</span>` +
   `</span>`;
 
-const cvPath = "/cv.pdf";
+/** Un CV par langue : la commande `cv` ouvre celui de la langue active. */
+const cvPaths: Record<Lang, string> = {
+  fr: "/cv.pdf",
+  en: "/cv-en.pdf",
+};
 const docsPath = worldCupDoc.href;
 const fallbackWorldCupPath = "/games/worldcup/index.html";
 const configuredWorldCupUrl = (import.meta.env.VITE_WORLDCUP_URL ?? "").trim();
@@ -167,14 +172,11 @@ const useTerminal = () => {
   }, []);
 
   const openCv = useCallback(() => {
-    const popup = window.open(cvPath, "_blank", "noopener,noreferrer");
-    if (popup) return;
-    const fallback = document.createElement("a");
-    fallback.href = cvPath;
-    fallback.target = "_blank";
-    fallback.rel = "noopener noreferrer";
-    fallback.click();
-  }, []);
+    // Un seul appel : avec "noopener", window.open renvoie toujours null, et
+    // l'ancien repli (clic sur un lien) ouvrait donc un second onglet. Si le
+    // navigateur bloque l'ouverture, la commande `cv` affiche un lien.
+    window.open(cvPaths[lang], "_blank", "noopener,noreferrer");
+  }, [lang]);
 
   const openInSameTab = useCallback((href: string) => {
     window.location.assign(href);
@@ -407,6 +409,11 @@ const useTerminal = () => {
               : `${clients.length} sites livres en production. Cliquez un domaine pour l'ouvrir.`,
             { tone: "muted", typed: true }
           ),
+          createLine(
+            `${active === "en" ? "Built in collaboration with" : "Realises en collaboration avec"} ` +
+              `<a href="${studio.url}" target="_blank" rel="noopener noreferrer">${studio.name}</a>`,
+            { type: "html" }
+          ),
           createLine("", {}),
           ...clients.flatMap((client) => [
             createLine(
@@ -529,10 +536,11 @@ const useTerminal = () => {
 
       cv: (context) => {
         context.openCv();
+        const href = cvPaths[context.lang];
         return [
           createLine(ui.openingCv[context.lang], { typed: true }),
           createLine(
-            `<a href="${cvPath}" target="_blank" rel="noopener noreferrer">cv.pdf</a>`,
+            `<a href="${href}" target="_blank" rel="noopener noreferrer">${href.slice(1)}</a>`,
             { type: "html" }
           ),
         ];

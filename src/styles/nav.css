@@ -509,6 +509,9 @@
     background: var(--surface-1);
     box-shadow: var(--shadow-lg);
     opacity: 0;
+    /* Un panneau ferme doit aussi sortir du parcours clavier et de
+       l'arbre d'accessibilite, sans changer l'animation d'ouverture. */
+    visibility: hidden;
     transform: translateY(-8px) scale(0.98);
     transform-origin: top center;
     pointer-events: none;
@@ -518,6 +521,7 @@
 
   .nav[data-menu-open] .nav-tabs {
     opacity: 1;
+    visibility: visible;
     transform: none;
     pointer-events: auto;
   }

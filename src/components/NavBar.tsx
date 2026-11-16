@@ -78,6 +78,7 @@ const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const burgerRef = useRef<HTMLButtonElement | null>(null);
   const startViewTransition = useViewTransition();
 
   const activeId = useMemo(
@@ -113,17 +114,27 @@ const NavBar = () => {
   const run = useCallback(
     (id: string) => {
       void runCommand(id, { simulateTyping: true });
+      if (menuOpen) burgerRef.current?.focus({ preventScroll: true });
       setMenuOpen(false);
       revealTerminal();
     },
-    [runCommand]
+    [menuOpen, runCommand]
   );
 
-  // Ferme le menu telephone a l'echappement.
+  // Le panneau precede le burger dans le DOM : a l'ouverture, on
+  // donne directement acces a ses raccourcis au clavier.
+  useEffect(() => {
+    if (menuOpen) tabRefs.current[rovingIndex]?.focus({ preventScroll: true });
+  }, [menuOpen, rovingIndex]);
+
+  // Ferme le menu telephone a l'echappement et rend le focus au burger.
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        burgerRef.current?.focus({ preventScroll: true });
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -302,6 +313,7 @@ const NavBar = () => {
           <button
             type="button"
             className="nav-burger"
+            ref={burgerRef}
             aria-label={lang === "en" ? "Menu" : "Menu"}
             aria-expanded={menuOpen}
             aria-controls="nav-menu"

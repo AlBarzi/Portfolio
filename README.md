@@ -55,8 +55,14 @@ Puis ajoutez vos fichiers `.pdf` dans `docs/plans-de-cours/` et cliquez `Rafraic
 
 ## CV
 
-Place ton CV en PDF a la racine du projet sous le nom `cv.pdf`.
-La commande `cv` ouvrira ce fichier dans un nouvel onglet.
+Deux PDF dans `public/`, un par langue du site :
+
+- `public/cv.pdf` : CV en francais
+- `public/cv-en.pdf` : CV en anglais
+
+La commande `cv` ouvre celui de la langue active dans un nouvel onglet
+(voir `cvPaths` dans `src/hooks/useTerminal.ts`). `cv.pdf` a la racine est
+la copie de la version francaise utilisee par l'ancienne version statique.
 
 ## Jeux
 

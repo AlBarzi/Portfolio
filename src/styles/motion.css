@@ -154,6 +154,7 @@
 
 [data-inview] .fan-head,
 [data-inview] .sites-head,
+.sites-head[data-inview],
 [data-inview] .stage-head {
   opacity: 1;
   transform: none;

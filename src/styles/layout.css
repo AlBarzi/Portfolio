@@ -432,6 +432,22 @@
   gap: var(--space-8);
 }
 
+/* Credit du studio, sous la grille : meme registre que les etiquettes. */
+.sites-credit {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.sites-credit a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .sites-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -709,25 +725,37 @@
   }
 
   .app-shell {
-    gap: var(--space-8);
+    gap: var(--space-6);
   }
 
-  /* Le hero reste epingle, mais on lui laisse une hauteur plus souple
-     et la feuille garde ses coins arrondis. */
+  /* Meme affiche et meme feuille : sur mobile, la hauteur suit le
+     contenu pour laisser les premieres cartes visibles sans grand vide. */
   .hero {
-    min-height: calc(100svh - var(--space-6));
-    padding-top: clamp(var(--space-8), 8vh, 80px);
+    min-height: 0;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-12);
   }
 
   .sheet {
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-4);
     border-radius: 22px 22px 0 0;
   }
 
   .hero-title-solid,
   .hero-title-outline {
-    white-space: normal;
+    /* Conserve les trois lignes originales, y compris a 320px. */
+    font-size: min(var(--display-xl), 14vw);
+    white-space: nowrap;
+  }
+
+  .hero-actions {
+    margin-top: var(--space-6);
+  }
+
+  .fan,
+  .sites {
+    gap: var(--space-6);
   }
 
   .hero-foot {
